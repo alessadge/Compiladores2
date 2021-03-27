@@ -1,0 +1,3796 @@
+Terminals unused in grammar
+
+    "=="
+    "<>"
+    "caso"
+    "cerrar"
+    "archivo"
+    "secuencial"
+    "abrir"
+    "como"
+    "no"
+    "div"
+    "lectura"
+    "lea"
+    "tipo"
+    "es"
+    "registro"
+    "escritura"
+    "final"
+    "leer"
+    "escribir"
+    "real"
+    "cadena"
+    Error
+
+
+Grammar
+
+    0 $accept: start "EOF"
+
+    1 start: empty-EoLList program opt-EoL
+
+    2 program: subtype-section subprogram-decl "inicio" EoLList stmts EoLList "fin"
+
+    3 empty-EoLList: %empty
+    4              | EoLList
+
+    5 subtype-section: variable-section
+    6                | %empty
+
+    7 subprogram-decl: subprogram-decl-list
+    8                | %empty
+
+    9 variable-section: variable-decl EoLList
+
+   10 EoLList: EoLList EoL
+   11        | EoL
+
+   12 opt-EoL: EoL
+   13        | %empty
+
+   14 variable-decl: variable-decl EoL type ident-list
+   15              | type ident-list
+
+   16 ident-list: ident-list "," "ID"
+   17           | "ID"
+
+   18 type: "entero"
+   19     | "caracter"
+   20     | "booleano"
+   21     | "arreglo" "[" "intConstant" "]" "de" type
+
+   22 subprogram-decl-list: subprogram-decl-list subprogramDecl
+   23                     | subprogramDecl
+
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+   25               | "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+   26 argument-opt: "(" argument-comma ")"
+   27             | %empty
+
+   28 argument-comma: argument-comma "," argument-decl
+   29               | argument-decl
+
+   30 argument-decl: "var" type "ID"
+   31              | type "ID"
+
+   32 argument-comma-list: argument-comma-list "," argument
+   33                    | argument
+
+   34 argument: "stringConstant"
+   35         | expr
+
+   36 statement: lvalue "<-" expr
+   37          | "llamar" "ID" "(" optional-expr ")"
+   38          | "llamar" "ID"
+   39          | "escriba" argument-comma-list
+   40          | "retorne"
+   41          | "retorne" expr
+   42          | if-statement
+   43          | "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | "repita" EoLList stmts EoLList "hasta" expr
+   45          | "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+
+   46 stmts: stmts EoLList statement
+   47      | statement
+
+   48 exprList: exprList "," expr
+   49         | expr
+
+   50 optional-expr: exprList
+   51              | %empty
+
+   52 if-statement: "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+
+   53 else-if-block: EoLList "sino" else-block
+   54              | EoLList
+
+   55 else-block: "si" expr opt-EoL "entonces" EoLList stmts else-if-block
+   56           | EoLList stmts EoLList
+
+   57 lvalue: "ID"
+   58       | "ID" "[" expr "]"
+
+   59 expr: expr "<" prec
+   60     | expr "<=" prec
+   61     | expr ">" prec
+   62     | expr ">=" prec
+   63     | expr "!=" prec
+   64     | expr "=" prec
+   65     | prec
+
+   66 prec: prec "+" term
+   67     | prec "-" term
+   68     | prec "o" term
+   69     | term
+
+   70 term: term "/" power
+   71     | term "mod" power
+   72     | term "*" power
+   73     | term "y" power
+   74     | power
+
+   75 power: power "^" factor
+   76      | factor
+
+   77 factor: "intConstant"
+   78       | "charConstant"
+   79       | "verdadero"
+   80       | "falso"
+   81       | "ID"
+   82       | "ID" "(" ")"
+   83       | "ID" "(" exprList ")"
+   84       | "ID" "[" expr "]"
+   85       | "(" expr ")"
+
+
+Terminals, with rules where they appear
+
+    "EOF" (0) 0
+    error (256)
+    "+" (258) 66
+    "-" (259) 67
+    "*" (260) 72
+    "/" (261) 70
+    "mod" (262) 71
+    "^" (263) 75
+    "<-" (264) 36 45
+    "=" (265) 64
+    "==" (266)
+    "<>" (267)
+    "<" (268) 59
+    ">" (269) 61
+    "<=" (270) 60
+    ">=" (271) 62
+    "(" (272) 26 37 82 83 85
+    ")" (273) 26 37 82 83 85
+    "[" (274) 21 58 84
+    "]" (275) 21 58 84
+    ":" (276) 24
+    "," (277) 16 28 32 48
+    "de" (278) 21
+    "funcion" (279) 24
+    "procedimiento" (280) 25
+    "var" (281) 30
+    "repita" (282) 44
+    "hasta" (283) 44 45
+    "caso" (284)
+    "cerrar" (285)
+    "archivo" (286)
+    "secuencial" (287)
+    "abrir" (288)
+    "como" (289)
+    "no" (290)
+    "div" (291)
+    "inicio" (292) 2 24 25
+    "lectura" (293)
+    "o" (294) 68
+    "entonces" (295) 52 55
+    "sino" (296) 53
+    "haga" (297) 43 45
+    "lea" (298)
+    "escriba" (299) 39
+    "retorne" (300) 40 41
+    "tipo" (301)
+    "es" (302)
+    "registro" (303)
+    "escritura" (304)
+    "llamar" (305) 37 38
+    "para" (306) 45
+    "mientras" (307) 43
+    "y" (308) 73
+    "fin" (309) 2 24 25 43 45 52
+    "final" (310)
+    "si" (311) 52 55
+    "leer" (312)
+    "escribir" (313)
+    "entero" (314) 18
+    "booleano" (315) 20
+    "caracter" (316) 19
+    "real" (317)
+    "arreglo" (318) 21
+    "verdadero" <std::string> (319) 79
+    "falso" <std::string> (320) 80
+    "ID" <std::string> (321) 16 17 24 25 30 31 37 38 57 58 81 82 83 84
+    "cadena" (322)
+    "charConstant" <std::string> (323) 78
+    "stringConstant" <std::string> (324) 34
+    "intConstant" <int> (325) 21 77
+    Error (326)
+    EoL (327) 10 11 12 14 24 25
+    "!=" (328) 63
+
+
+Nonterminals, with rules where they appear
+
+    $accept (74)
+        on left: 0
+    start (75)
+        on left: 1
+        on right: 0
+    program <AST::Node*> (76)
+        on left: 2
+        on right: 1
+    empty-EoLList (77)
+        on left: 3 4
+        on right: 1
+    subtype-section <std::vector<AST::Node*>> (78)
+        on left: 5 6
+        on right: 2 24 25
+    subprogram-decl <std::vector<AST::Node*>> (79)
+        on left: 7 8
+        on right: 2
+    variable-section <std::vector<AST::Node*>> (80)
+        on left: 9
+        on right: 5
+    EoLList (81)
+        on left: 10 11
+        on right: 2 4 9 10 24 25 43 44 45 46 52 53 54 55 56
+    opt-EoL (82)
+        on left: 12 13
+        on right: 1 52 55
+    variable-decl <std::vector<AST::Node*>> (83)
+        on left: 14 15
+        on right: 9 14
+    ident-list <std::list<std::string>> (84)
+        on left: 16 17
+        on right: 14 15 16
+    type <AST::Node*> (85)
+        on left: 18 19 20 21
+        on right: 14 15 21 24 30 31
+    subprogram-decl-list <std::vector<AST::Node*>> (86)
+        on left: 22 23
+        on right: 7 22
+    subprogramDecl <AST::Node*> (87)
+        on left: 24 25
+        on right: 22 23
+    argument-opt <std::vector<AST::Node*>> (88)
+        on left: 26 27
+        on right: 24 25
+    argument-comma <std::vector<AST::Node*>> (89)
+        on left: 28 29
+        on right: 26 28
+    argument-decl <AST::Node*> (90)
+        on left: 30 31
+        on right: 28 29
+    argument-comma-list <std::vector<AST::Node*>> (91)
+        on left: 32 33
+        on right: 32 39
+    argument <AST::Node*> (92)
+        on left: 34 35
+        on right: 32 33
+    statement <AST::Node*> (93)
+        on left: 36 37 38 39 40 41 42 43 44 45
+        on right: 46 47
+    stmts <std::vector<AST::Node*>> (94)
+        on left: 46 47
+        on right: 2 24 25 43 44 45 46 52 55 56
+    exprList <std::vector<AST::Node*>> (95)
+        on left: 48 49
+        on right: 48 50 83
+    optional-expr <std::vector<AST::Node*>> (96)
+        on left: 50 51
+        on right: 37
+    if-statement <AST::Node*> (97)
+        on left: 52
+        on right: 42
+    else-if-block <AST::Node*> (98)
+        on left: 53 54
+        on right: 52 55
+    else-block <AST::Node*> (99)
+        on left: 55 56
+        on right: 53
+    lvalue <AST::Node*> (100)
+        on left: 57 58
+        on right: 36 45
+    expr <AST::Node*> (101)
+        on left: 59 60 61 62 63 64 65
+        on right: 35 36 41 43 44 45 48 49 52 55 58 59 60 61 62 63 64 84 85
+    prec <AST::Node*> (102)
+        on left: 66 67 68 69
+        on right: 59 60 61 62 63 64 65 66 67 68
+    term <AST::Node*> (103)
+        on left: 70 71 72 73 74
+        on right: 66 67 68 69 70 71 72 73
+    power <AST::Node*> (104)
+        on left: 75 76
+        on right: 70 71 72 73 74 75
+    factor <AST::Node*> (105)
+        on left: 77 78 79 80 81 82 83 84 85
+        on right: 75 76
+
+
+State 0
+
+    0 $accept: . start "EOF"
+    1 start: . empty-EoLList program opt-EoL
+    3 empty-EoLList: . %empty  ["funcion", "procedimiento", "inicio", "entero", "booleano", "caracter", "arreglo"]
+    4              | . EoLList
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+
+    EoL  shift, and go to state 1
+
+    $default  reduce using rule 3 (empty-EoLList)
+
+    start          go to state 2
+    empty-EoLList  go to state 3
+    EoLList        go to state 4
+
+
+State 1
+
+   11 EoLList: EoL .
+
+    $default  reduce using rule 11 (EoLList)
+
+
+State 2
+
+    0 $accept: start . "EOF"
+
+    "EOF"  shift, and go to state 5
+
+
+State 3
+
+    1 start: empty-EoLList . program opt-EoL
+    2 program: . subtype-section subprogram-decl "inicio" EoLList stmts EoLList "fin"
+    5 subtype-section: . variable-section
+    6                | . %empty  ["funcion", "procedimiento", "inicio"]
+    9 variable-section: . variable-decl EoLList
+   14 variable-decl: . variable-decl EoL type ident-list
+   15              | . type ident-list
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+
+    $default  reduce using rule 6 (subtype-section)
+
+    program           go to state 10
+    subtype-section   go to state 11
+    variable-section  go to state 12
+    variable-decl     go to state 13
+    type              go to state 14
+
+
+State 4
+
+    4 empty-EoLList: EoLList .  ["funcion", "procedimiento", "inicio", "entero", "booleano", "caracter", "arreglo"]
+   10 EoLList: EoLList . EoL
+
+    EoL  shift, and go to state 15
+
+    $default  reduce using rule 4 (empty-EoLList)
+
+
+State 5
+
+    0 $accept: start "EOF" .
+
+    $default  accept
+
+
+State 6
+
+   18 type: "entero" .
+
+    $default  reduce using rule 18 (type)
+
+
+State 7
+
+   20 type: "booleano" .
+
+    $default  reduce using rule 20 (type)
+
+
+State 8
+
+   19 type: "caracter" .
+
+    $default  reduce using rule 19 (type)
+
+
+State 9
+
+   21 type: "arreglo" . "[" "intConstant" "]" "de" type
+
+    "["  shift, and go to state 16
+
+
+State 10
+
+    1 start: empty-EoLList program . opt-EoL
+   12 opt-EoL: . EoL
+   13        | . %empty  ["EOF"]
+
+    EoL  shift, and go to state 17
+
+    $default  reduce using rule 13 (opt-EoL)
+
+    opt-EoL  go to state 18
+
+
+State 11
+
+    2 program: subtype-section . subprogram-decl "inicio" EoLList stmts EoLList "fin"
+    7 subprogram-decl: . subprogram-decl-list
+    8                | . %empty  ["inicio"]
+   22 subprogram-decl-list: . subprogram-decl-list subprogramDecl
+   23                     | . subprogramDecl
+   24 subprogramDecl: . "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+   25               | . "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    "funcion"        shift, and go to state 19
+    "procedimiento"  shift, and go to state 20
+
+    $default  reduce using rule 8 (subprogram-decl)
+
+    subprogram-decl       go to state 21
+    subprogram-decl-list  go to state 22
+    subprogramDecl        go to state 23
+
+
+State 12
+
+    5 subtype-section: variable-section .
+
+    $default  reduce using rule 5 (subtype-section)
+
+
+State 13
+
+    9 variable-section: variable-decl . EoLList
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   14 variable-decl: variable-decl . EoL type ident-list
+
+    EoL  shift, and go to state 24
+
+    EoLList  go to state 25
+
+
+State 14
+
+   15 variable-decl: type . ident-list
+   16 ident-list: . ident-list "," "ID"
+   17           | . "ID"
+
+    "ID"  shift, and go to state 26
+
+    ident-list  go to state 27
+
+
+State 15
+
+   10 EoLList: EoLList EoL .
+
+    $default  reduce using rule 10 (EoLList)
+
+
+State 16
+
+   21 type: "arreglo" "[" . "intConstant" "]" "de" type
+
+    "intConstant"  shift, and go to state 28
+
+
+State 17
+
+   12 opt-EoL: EoL .
+
+    $default  reduce using rule 12 (opt-EoL)
+
+
+State 18
+
+    1 start: empty-EoLList program opt-EoL .
+
+    $default  reduce using rule 1 (start)
+
+
+State 19
+
+   24 subprogramDecl: "funcion" . "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    "ID"  shift, and go to state 29
+
+
+State 20
+
+   25 subprogramDecl: "procedimiento" . "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    "ID"  shift, and go to state 30
+
+
+State 21
+
+    2 program: subtype-section subprogram-decl . "inicio" EoLList stmts EoLList "fin"
+
+    "inicio"  shift, and go to state 31
+
+
+State 22
+
+    7 subprogram-decl: subprogram-decl-list .  ["inicio"]
+   22 subprogram-decl-list: subprogram-decl-list . subprogramDecl
+   24 subprogramDecl: . "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+   25               | . "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    "funcion"        shift, and go to state 19
+    "procedimiento"  shift, and go to state 20
+
+    $default  reduce using rule 7 (subprogram-decl)
+
+    subprogramDecl  go to state 32
+
+
+State 23
+
+   23 subprogram-decl-list: subprogramDecl .
+
+    $default  reduce using rule 23 (subprogram-decl-list)
+
+
+State 24
+
+   11 EoLList: EoL .  ["funcion", "procedimiento", "inicio", EoL]
+   14 variable-decl: variable-decl EoL . type ident-list
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+
+    $default  reduce using rule 11 (EoLList)
+
+    type  go to state 33
+
+
+State 25
+
+    9 variable-section: variable-decl EoLList .  ["funcion", "procedimiento", "inicio"]
+   10 EoLList: EoLList . EoL
+
+    EoL  shift, and go to state 15
+
+    $default  reduce using rule 9 (variable-section)
+
+
+State 26
+
+   17 ident-list: "ID" .
+
+    $default  reduce using rule 17 (ident-list)
+
+
+State 27
+
+   15 variable-decl: type ident-list .  [EoL]
+   16 ident-list: ident-list . "," "ID"
+
+    ","  shift, and go to state 34
+
+    $default  reduce using rule 15 (variable-decl)
+
+
+State 28
+
+   21 type: "arreglo" "[" "intConstant" . "]" "de" type
+
+    "]"  shift, and go to state 35
+
+
+State 29
+
+   24 subprogramDecl: "funcion" "ID" . argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+   26 argument-opt: . "(" argument-comma ")"
+   27             | . %empty  [":"]
+
+    "("  shift, and go to state 36
+
+    $default  reduce using rule 27 (argument-opt)
+
+    argument-opt  go to state 37
+
+
+State 30
+
+   25 subprogramDecl: "procedimiento" "ID" . argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+   26 argument-opt: . "(" argument-comma ")"
+   27             | . %empty  [EoL]
+
+    "("  shift, and go to state 36
+
+    $default  reduce using rule 27 (argument-opt)
+
+    argument-opt  go to state 38
+
+
+State 31
+
+    2 program: subtype-section subprogram-decl "inicio" . EoLList stmts EoLList "fin"
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 39
+
+
+State 32
+
+   22 subprogram-decl-list: subprogram-decl-list subprogramDecl .
+
+    $default  reduce using rule 22 (subprogram-decl-list)
+
+
+State 33
+
+   14 variable-decl: variable-decl EoL type . ident-list
+   16 ident-list: . ident-list "," "ID"
+   17           | . "ID"
+
+    "ID"  shift, and go to state 26
+
+    ident-list  go to state 40
+
+
+State 34
+
+   16 ident-list: ident-list "," . "ID"
+
+    "ID"  shift, and go to state 41
+
+
+State 35
+
+   21 type: "arreglo" "[" "intConstant" "]" . "de" type
+
+    "de"  shift, and go to state 42
+
+
+State 36
+
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+   26 argument-opt: "(" . argument-comma ")"
+   28 argument-comma: . argument-comma "," argument-decl
+   29               | . argument-decl
+   30 argument-decl: . "var" type "ID"
+   31              | . type "ID"
+
+    "var"       shift, and go to state 43
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+
+    type            go to state 44
+    argument-comma  go to state 45
+    argument-decl   go to state 46
+
+
+State 37
+
+   24 subprogramDecl: "funcion" "ID" argument-opt . ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    ":"  shift, and go to state 47
+
+
+State 38
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   25 subprogramDecl: "procedimiento" "ID" argument-opt . EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 48
+
+
+State 39
+
+    2 program: subtype-section subprogram-decl "inicio" EoLList . stmts EoLList "fin"
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 58
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 40
+
+   14 variable-decl: variable-decl EoL type ident-list .  [EoL]
+   16 ident-list: ident-list . "," "ID"
+
+    ","  shift, and go to state 34
+
+    $default  reduce using rule 14 (variable-decl)
+
+
+State 41
+
+   16 ident-list: ident-list "," "ID" .
+
+    $default  reduce using rule 16 (ident-list)
+
+
+State 42
+
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+   21     | "arreglo" "[" "intConstant" "]" "de" . type
+
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+
+    type  go to state 61
+
+
+State 43
+
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+   30 argument-decl: "var" . type "ID"
+
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+
+    type  go to state 62
+
+
+State 44
+
+   31 argument-decl: type . "ID"
+
+    "ID"  shift, and go to state 63
+
+
+State 45
+
+   26 argument-opt: "(" argument-comma . ")"
+   28 argument-comma: argument-comma . "," argument-decl
+
+    ")"  shift, and go to state 64
+    ","  shift, and go to state 65
+
+
+State 46
+
+   29 argument-comma: argument-decl .
+
+    $default  reduce using rule 29 (argument-comma)
+
+
+State 47
+
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" . type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+
+    type  go to state 66
+
+
+State 48
+
+    5 subtype-section: . variable-section
+    6                | . %empty  ["inicio"]
+    9 variable-section: . variable-decl EoLList
+   10 EoLList: EoLList . EoL
+   14 variable-decl: . variable-decl EoL type ident-list
+   15              | . type ident-list
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+   25 subprogramDecl: "procedimiento" "ID" argument-opt EoLList . subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+    EoL         shift, and go to state 15
+
+    $default  reduce using rule 6 (subtype-section)
+
+    subtype-section   go to state 67
+    variable-section  go to state 12
+    variable-decl     go to state 13
+    type              go to state 14
+
+
+State 49
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   44 statement: "repita" . EoLList stmts EoLList "hasta" expr
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 68
+
+
+State 50
+
+   32 argument-comma-list: . argument-comma-list "," argument
+   33                    | . argument
+   34 argument: . "stringConstant"
+   35         | . expr
+   39 statement: "escriba" . argument-comma-list
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("               shift, and go to state 69
+    "verdadero"       shift, and go to state 70
+    "falso"           shift, and go to state 71
+    "ID"              shift, and go to state 72
+    "charConstant"    shift, and go to state 73
+    "stringConstant"  shift, and go to state 74
+    "intConstant"     shift, and go to state 75
+
+    argument-comma-list  go to state 76
+    argument             go to state 77
+    expr                 go to state 78
+    prec                 go to state 79
+    term                 go to state 80
+    power                go to state 81
+    factor               go to state 82
+
+
+State 51
+
+   40 statement: "retorne" .  [EoL]
+   41          | "retorne" . expr
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    $default  reduce using rule 40 (statement)
+
+    expr    go to state 83
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 52
+
+   37 statement: "llamar" . "ID" "(" optional-expr ")"
+   38          | "llamar" . "ID"
+
+    "ID"  shift, and go to state 84
+
+
+State 53
+
+   45 statement: "para" . lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "ID"  shift, and go to state 56
+
+    lvalue  go to state 85
+
+
+State 54
+
+   43 statement: "mientras" . expr "haga" EoLList stmts EoLList "fin" "mientras"
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 86
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 55
+
+   52 if-statement: "si" . expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 87
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 56
+
+   57 lvalue: "ID" .  ["<-"]
+   58       | "ID" . "[" expr "]"
+
+    "["  shift, and go to state 88
+
+    $default  reduce using rule 57 (lvalue)
+
+
+State 57
+
+   47 stmts: statement .
+
+    $default  reduce using rule 47 (stmts)
+
+
+State 58
+
+    2 program: subtype-section subprogram-decl "inicio" EoLList stmts . EoLList "fin"
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   46 stmts: stmts . EoLList statement
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 89
+
+
+State 59
+
+   42 statement: if-statement .
+
+    $default  reduce using rule 42 (statement)
+
+
+State 60
+
+   36 statement: lvalue . "<-" expr
+
+    "<-"  shift, and go to state 90
+
+
+State 61
+
+   21 type: "arreglo" "[" "intConstant" "]" "de" type .
+
+    $default  reduce using rule 21 (type)
+
+
+State 62
+
+   30 argument-decl: "var" type . "ID"
+
+    "ID"  shift, and go to state 91
+
+
+State 63
+
+   31 argument-decl: type "ID" .
+
+    $default  reduce using rule 31 (argument-decl)
+
+
+State 64
+
+   26 argument-opt: "(" argument-comma ")" .
+
+    $default  reduce using rule 26 (argument-opt)
+
+
+State 65
+
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+   28 argument-comma: argument-comma "," . argument-decl
+   30 argument-decl: . "var" type "ID"
+   31              | . type "ID"
+
+    "var"       shift, and go to state 43
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+
+    type           go to state 44
+    argument-decl  go to state 92
+
+
+State 66
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type . EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 93
+
+
+State 67
+
+   25 subprogramDecl: "procedimiento" "ID" argument-opt EoLList subtype-section . "inicio" EoLList stmts EoLList "fin" EoL
+
+    "inicio"  shift, and go to state 94
+
+
+State 68
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   44          | "repita" EoLList . stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 95
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 69
+
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+   85       | "(" . expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 96
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 70
+
+   79 factor: "verdadero" .
+
+    $default  reduce using rule 79 (factor)
+
+
+State 71
+
+   80 factor: "falso" .
+
+    $default  reduce using rule 80 (factor)
+
+
+State 72
+
+   81 factor: "ID" .  ["+", "-", "*", "/", "mod", "^", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", "y", EoL, "!="]
+   82       | "ID" . "(" ")"
+   83       | "ID" . "(" exprList ")"
+   84       | "ID" . "[" expr "]"
+
+    "("  shift, and go to state 97
+    "["  shift, and go to state 98
+
+    $default  reduce using rule 81 (factor)
+
+
+State 73
+
+   78 factor: "charConstant" .
+
+    $default  reduce using rule 78 (factor)
+
+
+State 74
+
+   34 argument: "stringConstant" .
+
+    $default  reduce using rule 34 (argument)
+
+
+State 75
+
+   77 factor: "intConstant" .
+
+    $default  reduce using rule 77 (factor)
+
+
+State 76
+
+   32 argument-comma-list: argument-comma-list . "," argument
+   39 statement: "escriba" argument-comma-list .  [EoL]
+
+    ","  shift, and go to state 99
+
+    $default  reduce using rule 39 (statement)
+
+
+State 77
+
+   33 argument-comma-list: argument .
+
+    $default  reduce using rule 33 (argument-comma-list)
+
+
+State 78
+
+   35 argument: expr .  [",", EoL]
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    "!="  shift, and go to state 105
+
+    $default  reduce using rule 35 (argument)
+
+
+State 79
+
+   65 expr: prec .  ["=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "entonces", "haga", EoL, "!="]
+   66 prec: prec . "+" term
+   67     | prec . "-" term
+   68     | prec . "o" term
+
+    "+"  shift, and go to state 106
+    "-"  shift, and go to state 107
+    "o"  shift, and go to state 108
+
+    $default  reduce using rule 65 (expr)
+
+
+State 80
+
+   69 prec: term .  ["+", "-", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", EoL, "!="]
+   70 term: term . "/" power
+   71     | term . "mod" power
+   72     | term . "*" power
+   73     | term . "y" power
+
+    "*"    shift, and go to state 109
+    "/"    shift, and go to state 110
+    "mod"  shift, and go to state 111
+    "y"    shift, and go to state 112
+
+    $default  reduce using rule 69 (prec)
+
+
+State 81
+
+   74 term: power .  ["+", "-", "*", "/", "mod", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", "y", EoL, "!="]
+   75 power: power . "^" factor
+
+    "^"  shift, and go to state 113
+
+    $default  reduce using rule 74 (term)
+
+
+State 82
+
+   76 power: factor .
+
+    $default  reduce using rule 76 (power)
+
+
+State 83
+
+   41 statement: "retorne" expr .  [EoL]
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    "!="  shift, and go to state 105
+
+    $default  reduce using rule 41 (statement)
+
+
+State 84
+
+   37 statement: "llamar" "ID" . "(" optional-expr ")"
+   38          | "llamar" "ID" .  [EoL]
+
+    "("  shift, and go to state 114
+
+    $default  reduce using rule 38 (statement)
+
+
+State 85
+
+   45 statement: "para" lvalue . "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+
+    "<-"  shift, and go to state 115
+
+
+State 86
+
+   43 statement: "mientras" expr . "haga" EoLList stmts EoLList "fin" "mientras"
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="     shift, and go to state 100
+    "<"     shift, and go to state 101
+    ">"     shift, and go to state 102
+    "<="    shift, and go to state 103
+    ">="    shift, and go to state 104
+    "haga"  shift, and go to state 116
+    "!="    shift, and go to state 105
+
+
+State 87
+
+   12 opt-EoL: . EoL
+   13        | . %empty  ["entonces"]
+   52 if-statement: "si" expr . opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    EoL   shift, and go to state 17
+    "!="  shift, and go to state 105
+
+    $default  reduce using rule 13 (opt-EoL)
+
+    opt-EoL  go to state 117
+
+
+State 88
+
+   58 lvalue: "ID" "[" . expr "]"
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 118
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 89
+
+    2 program: subtype-section subprogram-decl "inicio" EoLList stmts EoLList . "fin"
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: stmts EoLList . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "fin"       shift, and go to state 119
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 120
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 90
+
+   36 statement: lvalue "<-" . expr
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 121
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 91
+
+   30 argument-decl: "var" type "ID" .
+
+    $default  reduce using rule 30 (argument-decl)
+
+
+State 92
+
+   28 argument-comma: argument-comma "," argument-decl .
+
+    $default  reduce using rule 28 (argument-comma)
+
+
+State 93
+
+    5 subtype-section: . variable-section
+    6                | . %empty  ["inicio"]
+    9 variable-section: . variable-decl EoLList
+   10 EoLList: EoLList . EoL
+   14 variable-decl: . variable-decl EoL type ident-list
+   15              | . type ident-list
+   18 type: . "entero"
+   19     | . "caracter"
+   20     | . "booleano"
+   21     | . "arreglo" "[" "intConstant" "]" "de" type
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList . subtype-section "inicio" EoLList stmts EoLList "fin" EoL
+
+    "entero"    shift, and go to state 6
+    "booleano"  shift, and go to state 7
+    "caracter"  shift, and go to state 8
+    "arreglo"   shift, and go to state 9
+    EoL         shift, and go to state 15
+
+    $default  reduce using rule 6 (subtype-section)
+
+    subtype-section   go to state 122
+    variable-section  go to state 12
+    variable-decl     go to state 13
+    type              go to state 14
+
+
+State 94
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   25 subprogramDecl: "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" . EoLList stmts EoLList "fin" EoL
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 123
+
+
+State 95
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   44 statement: "repita" EoLList stmts . EoLList "hasta" expr
+   46 stmts: stmts . EoLList statement
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 124
+
+
+State 96
+
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+   85 factor: "(" expr . ")"
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    ")"   shift, and go to state 125
+    "!="  shift, and go to state 105
+
+
+State 97
+
+   48 exprList: . exprList "," expr
+   49         | . expr
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   82       | "ID" "(" . ")"
+   83       | . "ID" "(" exprList ")"
+   83       | "ID" "(" . exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    ")"             shift, and go to state 126
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    exprList  go to state 127
+    expr      go to state 128
+    prec      go to state 79
+    term      go to state 80
+    power     go to state 81
+    factor    go to state 82
+
+
+State 98
+
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   84       | "ID" "[" . expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 129
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 99
+
+   32 argument-comma-list: argument-comma-list "," . argument
+   34 argument: . "stringConstant"
+   35         | . expr
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("               shift, and go to state 69
+    "verdadero"       shift, and go to state 70
+    "falso"           shift, and go to state 71
+    "ID"              shift, and go to state 72
+    "charConstant"    shift, and go to state 73
+    "stringConstant"  shift, and go to state 74
+    "intConstant"     shift, and go to state 75
+
+    argument  go to state 130
+    expr      go to state 78
+    prec      go to state 79
+    term      go to state 80
+    power     go to state 81
+    factor    go to state 82
+
+
+State 100
+
+   64 expr: expr "=" . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    prec    go to state 131
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 101
+
+   59 expr: expr "<" . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    prec    go to state 132
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 102
+
+   61 expr: expr ">" . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    prec    go to state 133
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 103
+
+   60 expr: expr "<=" . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    prec    go to state 134
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 104
+
+   62 expr: expr ">=" . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    prec    go to state 135
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 105
+
+   63 expr: expr "!=" . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    prec    go to state 136
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 106
+
+   66 prec: prec "+" . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    term    go to state 137
+    power   go to state 81
+    factor  go to state 82
+
+
+State 107
+
+   67 prec: prec "-" . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    term    go to state 138
+    power   go to state 81
+    factor  go to state 82
+
+
+State 108
+
+   68 prec: prec "o" . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    term    go to state 139
+    power   go to state 81
+    factor  go to state 82
+
+
+State 109
+
+   72 term: term "*" . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    power   go to state 140
+    factor  go to state 82
+
+
+State 110
+
+   70 term: term "/" . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    power   go to state 141
+    factor  go to state 82
+
+
+State 111
+
+   71 term: term "mod" . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    power   go to state 142
+    factor  go to state 82
+
+
+State 112
+
+   73 term: term "y" . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    power   go to state 143
+    factor  go to state 82
+
+
+State 113
+
+   75 power: power "^" . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    factor  go to state 144
+
+
+State 114
+
+   37 statement: "llamar" "ID" "(" . optional-expr ")"
+   48 exprList: . exprList "," expr
+   49         | . expr
+   50 optional-expr: . exprList
+   51              | . %empty  [")"]
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    $default  reduce using rule 51 (optional-expr)
+
+    exprList       go to state 145
+    optional-expr  go to state 146
+    expr           go to state 128
+    prec           go to state 79
+    term           go to state 80
+    power          go to state 81
+    factor         go to state 82
+
+
+State 115
+
+   45 statement: "para" lvalue "<-" . expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 147
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 116
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   43 statement: "mientras" expr "haga" . EoLList stmts EoLList "fin" "mientras"
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 148
+
+
+State 117
+
+   52 if-statement: "si" expr opt-EoL . "entonces" EoLList stmts else-if-block "fin" "si"
+
+    "entonces"  shift, and go to state 149
+
+
+State 118
+
+   58 lvalue: "ID" "[" expr . "]"
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    "]"   shift, and go to state 150
+    "!="  shift, and go to state 105
+
+
+State 119
+
+    2 program: subtype-section subprogram-decl "inicio" EoLList stmts EoLList "fin" .
+
+    $default  reduce using rule 2 (program)
+
+
+State 120
+
+   46 stmts: stmts EoLList statement .
+
+    $default  reduce using rule 46 (stmts)
+
+
+State 121
+
+   36 statement: lvalue "<-" expr .  [EoL]
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    "!="  shift, and go to state 105
+
+    $default  reduce using rule 36 (statement)
+
+
+State 122
+
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList subtype-section . "inicio" EoLList stmts EoLList "fin" EoL
+
+    "inicio"  shift, and go to state 151
+
+
+State 123
+
+   10 EoLList: EoLList . EoL
+   25 subprogramDecl: "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList . stmts EoLList "fin" EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 152
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 124
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   44          | "repita" EoLList stmts EoLList . "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: stmts EoLList . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "hasta"     shift, and go to state 153
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 120
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 125
+
+   85 factor: "(" expr ")" .
+
+    $default  reduce using rule 85 (factor)
+
+
+State 126
+
+   82 factor: "ID" "(" ")" .
+
+    $default  reduce using rule 82 (factor)
+
+
+State 127
+
+   48 exprList: exprList . "," expr
+   83 factor: "ID" "(" exprList . ")"
+
+    ")"  shift, and go to state 154
+    ","  shift, and go to state 155
+
+
+State 128
+
+   49 exprList: expr .  [")", ","]
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    "!="  shift, and go to state 105
+
+    $default  reduce using rule 49 (exprList)
+
+
+State 129
+
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+   84 factor: "ID" "[" expr . "]"
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    "]"   shift, and go to state 156
+    "!="  shift, and go to state 105
+
+
+State 130
+
+   32 argument-comma-list: argument-comma-list "," argument .
+
+    $default  reduce using rule 32 (argument-comma-list)
+
+
+State 131
+
+   64 expr: expr "=" prec .  ["=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "entonces", "haga", EoL, "!="]
+   66 prec: prec . "+" term
+   67     | prec . "-" term
+   68     | prec . "o" term
+
+    "+"  shift, and go to state 106
+    "-"  shift, and go to state 107
+    "o"  shift, and go to state 108
+
+    $default  reduce using rule 64 (expr)
+
+
+State 132
+
+   59 expr: expr "<" prec .  ["=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "entonces", "haga", EoL, "!="]
+   66 prec: prec . "+" term
+   67     | prec . "-" term
+   68     | prec . "o" term
+
+    "+"  shift, and go to state 106
+    "-"  shift, and go to state 107
+    "o"  shift, and go to state 108
+
+    $default  reduce using rule 59 (expr)
+
+
+State 133
+
+   61 expr: expr ">" prec .  ["=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "entonces", "haga", EoL, "!="]
+   66 prec: prec . "+" term
+   67     | prec . "-" term
+   68     | prec . "o" term
+
+    "+"  shift, and go to state 106
+    "-"  shift, and go to state 107
+    "o"  shift, and go to state 108
+
+    $default  reduce using rule 61 (expr)
+
+
+State 134
+
+   60 expr: expr "<=" prec .  ["=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "entonces", "haga", EoL, "!="]
+   66 prec: prec . "+" term
+   67     | prec . "-" term
+   68     | prec . "o" term
+
+    "+"  shift, and go to state 106
+    "-"  shift, and go to state 107
+    "o"  shift, and go to state 108
+
+    $default  reduce using rule 60 (expr)
+
+
+State 135
+
+   62 expr: expr ">=" prec .  ["=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "entonces", "haga", EoL, "!="]
+   66 prec: prec . "+" term
+   67     | prec . "-" term
+   68     | prec . "o" term
+
+    "+"  shift, and go to state 106
+    "-"  shift, and go to state 107
+    "o"  shift, and go to state 108
+
+    $default  reduce using rule 62 (expr)
+
+
+State 136
+
+   63 expr: expr "!=" prec .  ["=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "entonces", "haga", EoL, "!="]
+   66 prec: prec . "+" term
+   67     | prec . "-" term
+   68     | prec . "o" term
+
+    "+"  shift, and go to state 106
+    "-"  shift, and go to state 107
+    "o"  shift, and go to state 108
+
+    $default  reduce using rule 63 (expr)
+
+
+State 137
+
+   66 prec: prec "+" term .  ["+", "-", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", EoL, "!="]
+   70 term: term . "/" power
+   71     | term . "mod" power
+   72     | term . "*" power
+   73     | term . "y" power
+
+    "*"    shift, and go to state 109
+    "/"    shift, and go to state 110
+    "mod"  shift, and go to state 111
+    "y"    shift, and go to state 112
+
+    $default  reduce using rule 66 (prec)
+
+
+State 138
+
+   67 prec: prec "-" term .  ["+", "-", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", EoL, "!="]
+   70 term: term . "/" power
+   71     | term . "mod" power
+   72     | term . "*" power
+   73     | term . "y" power
+
+    "*"    shift, and go to state 109
+    "/"    shift, and go to state 110
+    "mod"  shift, and go to state 111
+    "y"    shift, and go to state 112
+
+    $default  reduce using rule 67 (prec)
+
+
+State 139
+
+   68 prec: prec "o" term .  ["+", "-", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", EoL, "!="]
+   70 term: term . "/" power
+   71     | term . "mod" power
+   72     | term . "*" power
+   73     | term . "y" power
+
+    "*"    shift, and go to state 109
+    "/"    shift, and go to state 110
+    "mod"  shift, and go to state 111
+    "y"    shift, and go to state 112
+
+    $default  reduce using rule 68 (prec)
+
+
+State 140
+
+   72 term: term "*" power .  ["+", "-", "*", "/", "mod", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", "y", EoL, "!="]
+   75 power: power . "^" factor
+
+    "^"  shift, and go to state 113
+
+    $default  reduce using rule 72 (term)
+
+
+State 141
+
+   70 term: term "/" power .  ["+", "-", "*", "/", "mod", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", "y", EoL, "!="]
+   75 power: power . "^" factor
+
+    "^"  shift, and go to state 113
+
+    $default  reduce using rule 70 (term)
+
+
+State 142
+
+   71 term: term "mod" power .  ["+", "-", "*", "/", "mod", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", "y", EoL, "!="]
+   75 power: power . "^" factor
+
+    "^"  shift, and go to state 113
+
+    $default  reduce using rule 71 (term)
+
+
+State 143
+
+   73 term: term "y" power .  ["+", "-", "*", "/", "mod", "=", "<", ">", "<=", ">=", ")", "]", ",", "hasta", "o", "entonces", "haga", "y", EoL, "!="]
+   75 power: power . "^" factor
+
+    "^"  shift, and go to state 113
+
+    $default  reduce using rule 73 (term)
+
+
+State 144
+
+   75 power: power "^" factor .
+
+    $default  reduce using rule 75 (power)
+
+
+State 145
+
+   48 exprList: exprList . "," expr
+   50 optional-expr: exprList .  [")"]
+
+    ","  shift, and go to state 155
+
+    $default  reduce using rule 50 (optional-expr)
+
+
+State 146
+
+   37 statement: "llamar" "ID" "(" optional-expr . ")"
+
+    ")"  shift, and go to state 157
+
+
+State 147
+
+   45 statement: "para" lvalue "<-" expr . "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="      shift, and go to state 100
+    "<"      shift, and go to state 101
+    ">"      shift, and go to state 102
+    "<="     shift, and go to state 103
+    ">="     shift, and go to state 104
+    "hasta"  shift, and go to state 158
+    "!="     shift, and go to state 105
+
+
+State 148
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   43          | "mientras" expr "haga" EoLList . stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 159
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 149
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   52 if-statement: "si" expr opt-EoL "entonces" . EoLList stmts else-if-block "fin" "si"
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 160
+
+
+State 150
+
+   58 lvalue: "ID" "[" expr "]" .
+
+    $default  reduce using rule 58 (lvalue)
+
+
+State 151
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" . EoLList stmts EoLList "fin" EoL
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 161
+
+
+State 152
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   25 subprogramDecl: "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts . EoLList "fin" EoL
+   46 stmts: stmts . EoLList statement
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 162
+
+
+State 153
+
+   44 statement: "repita" EoLList stmts EoLList "hasta" . expr
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 163
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 154
+
+   83 factor: "ID" "(" exprList ")" .
+
+    $default  reduce using rule 83 (factor)
+
+
+State 155
+
+   48 exprList: exprList "," . expr
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 164
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 156
+
+   84 factor: "ID" "[" expr "]" .
+
+    $default  reduce using rule 84 (factor)
+
+
+State 157
+
+   37 statement: "llamar" "ID" "(" optional-expr ")" .
+
+    $default  reduce using rule 37 (statement)
+
+
+State 158
+
+   45 statement: "para" lvalue "<-" expr "hasta" . expr "haga" EoLList stmts EoLList "fin" "para"
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 165
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 159
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   43 statement: "mientras" expr "haga" EoLList stmts . EoLList "fin" "mientras"
+   46 stmts: stmts . EoLList statement
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 166
+
+
+State 160
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   52             | "si" expr opt-EoL "entonces" EoLList . stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 167
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 161
+
+   10 EoLList: EoLList . EoL
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList . stmts EoLList "fin" EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 168
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 162
+
+   10 EoLList: EoLList . EoL
+   25 subprogramDecl: "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList . "fin" EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: stmts EoLList . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "fin"       shift, and go to state 169
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 120
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 163
+
+   44 statement: "repita" EoLList stmts EoLList "hasta" expr .  [EoL]
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    "!="  shift, and go to state 105
+
+    $default  reduce using rule 44 (statement)
+
+
+State 164
+
+   48 exprList: exprList "," expr .  [")", ","]
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    "!="  shift, and go to state 105
+
+    $default  reduce using rule 48 (exprList)
+
+
+State 165
+
+   45 statement: "para" lvalue "<-" expr "hasta" expr . "haga" EoLList stmts EoLList "fin" "para"
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="     shift, and go to state 100
+    "<"     shift, and go to state 101
+    ">"     shift, and go to state 102
+    "<="    shift, and go to state 103
+    ">="    shift, and go to state 104
+    "haga"  shift, and go to state 170
+    "!="    shift, and go to state 105
+
+
+State 166
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   43          | "mientras" expr "haga" EoLList stmts EoLList . "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: stmts EoLList . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "fin"       shift, and go to state 171
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 120
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 167
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   46 stmts: stmts . EoLList statement
+   52 if-statement: "si" expr opt-EoL "entonces" EoLList stmts . else-if-block "fin" "si"
+   53 else-if-block: . EoLList "sino" else-block
+   54              | . EoLList
+
+    EoL  shift, and go to state 1
+
+    EoLList        go to state 172
+    else-if-block  go to state 173
+
+
+State 168
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts . EoLList "fin" EoL
+   46 stmts: stmts . EoLList statement
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 174
+
+
+State 169
+
+   25 subprogramDecl: "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList "fin" . EoL
+
+    EoL  shift, and go to state 175
+
+
+State 170
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   45 statement: "para" lvalue "<-" expr "hasta" expr "haga" . EoLList stmts EoLList "fin" "para"
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 176
+
+
+State 171
+
+   43 statement: "mientras" expr "haga" EoLList stmts EoLList "fin" . "mientras"
+
+    "mientras"  shift, and go to state 177
+
+
+State 172
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: stmts EoLList . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   53 else-if-block: EoLList . "sino" else-block
+   54              | EoLList .  ["fin"]
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "sino"      shift, and go to state 178
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    $default  reduce using rule 54 (else-if-block)
+
+    statement     go to state 120
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 173
+
+   52 if-statement: "si" expr opt-EoL "entonces" EoLList stmts else-if-block . "fin" "si"
+
+    "fin"  shift, and go to state 179
+
+
+State 174
+
+   10 EoLList: EoLList . EoL
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList . "fin" EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: stmts EoLList . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "fin"       shift, and go to state 180
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 120
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 175
+
+   25 subprogramDecl: "procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL .
+
+    $default  reduce using rule 25 (subprogramDecl)
+
+
+State 176
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   45          | "para" lvalue "<-" expr "hasta" expr "haga" EoLList . stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 181
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 177
+
+   43 statement: "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras" .
+
+    $default  reduce using rule 43 (statement)
+
+
+State 178
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   53 else-if-block: EoLList "sino" . else-block
+   55 else-block: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block
+   56           | . EoLList stmts EoLList
+
+    "si"  shift, and go to state 182
+    EoL   shift, and go to state 1
+
+    EoLList     go to state 183
+    else-block  go to state 184
+
+
+State 179
+
+   52 if-statement: "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" . "si"
+
+    "si"  shift, and go to state 185
+
+
+State 180
+
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" . EoL
+
+    EoL  shift, and go to state 186
+
+
+State 181
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   45 statement: "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts . EoLList "fin" "para"
+   46 stmts: stmts . EoLList statement
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 187
+
+
+State 182
+
+   55 else-block: "si" . expr opt-EoL "entonces" EoLList stmts else-if-block
+   59 expr: . expr "<" prec
+   60     | . expr "<=" prec
+   61     | . expr ">" prec
+   62     | . expr ">=" prec
+   63     | . expr "!=" prec
+   64     | . expr "=" prec
+   65     | . prec
+   66 prec: . prec "+" term
+   67     | . prec "-" term
+   68     | . prec "o" term
+   69     | . term
+   70 term: . term "/" power
+   71     | . term "mod" power
+   72     | . term "*" power
+   73     | . term "y" power
+   74     | . power
+   75 power: . power "^" factor
+   76      | . factor
+   77 factor: . "intConstant"
+   78       | . "charConstant"
+   79       | . "verdadero"
+   80       | . "falso"
+   81       | . "ID"
+   82       | . "ID" "(" ")"
+   83       | . "ID" "(" exprList ")"
+   84       | . "ID" "[" expr "]"
+   85       | . "(" expr ")"
+
+    "("             shift, and go to state 69
+    "verdadero"     shift, and go to state 70
+    "falso"         shift, and go to state 71
+    "ID"            shift, and go to state 72
+    "charConstant"  shift, and go to state 73
+    "intConstant"   shift, and go to state 75
+
+    expr    go to state 188
+    prec    go to state 79
+    term    go to state 80
+    power   go to state 81
+    factor  go to state 82
+
+
+State 183
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   56 else-block: EoLList . stmts EoLList
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 189
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 184
+
+   53 else-if-block: EoLList "sino" else-block .
+
+    $default  reduce using rule 53 (else-if-block)
+
+
+State 185
+
+   52 if-statement: "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si" .
+
+    $default  reduce using rule 52 (if-statement)
+
+
+State 186
+
+   24 subprogramDecl: "funcion" "ID" argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL .
+
+    $default  reduce using rule 24 (subprogramDecl)
+
+
+State 187
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   45          | "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList . "fin" "para"
+   46 stmts: stmts EoLList . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "fin"       shift, and go to state 190
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 120
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 188
+
+   12 opt-EoL: . EoL
+   13        | . %empty  ["entonces"]
+   55 else-block: "si" expr . opt-EoL "entonces" EoLList stmts else-if-block
+   59 expr: expr . "<" prec
+   60     | expr . "<=" prec
+   61     | expr . ">" prec
+   62     | expr . ">=" prec
+   63     | expr . "!=" prec
+   64     | expr . "=" prec
+
+    "="   shift, and go to state 100
+    "<"   shift, and go to state 101
+    ">"   shift, and go to state 102
+    "<="  shift, and go to state 103
+    ">="  shift, and go to state 104
+    EoL   shift, and go to state 17
+    "!="  shift, and go to state 105
+
+    $default  reduce using rule 13 (opt-EoL)
+
+    opt-EoL  go to state 191
+
+
+State 189
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   46 stmts: stmts . EoLList statement
+   56 else-block: EoLList stmts . EoLList
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 192
+
+
+State 190
+
+   45 statement: "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" . "para"
+
+    "para"  shift, and go to state 193
+
+
+State 191
+
+   55 else-block: "si" expr opt-EoL . "entonces" EoLList stmts else-if-block
+
+    "entonces"  shift, and go to state 194
+
+
+State 192
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: stmts EoLList . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   56 else-block: EoLList stmts EoLList .  ["fin"]
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    $default  reduce using rule 56 (else-block)
+
+    statement     go to state 120
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 193
+
+   45 statement: "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para" .
+
+    $default  reduce using rule 45 (statement)
+
+
+State 194
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   55 else-block: "si" expr opt-EoL "entonces" . EoLList stmts else-if-block
+
+    EoL  shift, and go to state 1
+
+    EoLList  go to state 195
+
+
+State 195
+
+   10 EoLList: EoLList . EoL
+   36 statement: . lvalue "<-" expr
+   37          | . "llamar" "ID" "(" optional-expr ")"
+   38          | . "llamar" "ID"
+   39          | . "escriba" argument-comma-list
+   40          | . "retorne"
+   41          | . "retorne" expr
+   42          | . if-statement
+   43          | . "mientras" expr "haga" EoLList stmts EoLList "fin" "mientras"
+   44          | . "repita" EoLList stmts EoLList "hasta" expr
+   45          | . "para" lvalue "<-" expr "hasta" expr "haga" EoLList stmts EoLList "fin" "para"
+   46 stmts: . stmts EoLList statement
+   47      | . statement
+   52 if-statement: . "si" expr opt-EoL "entonces" EoLList stmts else-if-block "fin" "si"
+   55 else-block: "si" expr opt-EoL "entonces" EoLList . stmts else-if-block
+   57 lvalue: . "ID"
+   58       | . "ID" "[" expr "]"
+
+    "repita"    shift, and go to state 49
+    "escriba"   shift, and go to state 50
+    "retorne"   shift, and go to state 51
+    "llamar"    shift, and go to state 52
+    "para"      shift, and go to state 53
+    "mientras"  shift, and go to state 54
+    "si"        shift, and go to state 55
+    "ID"        shift, and go to state 56
+    EoL         shift, and go to state 15
+
+    statement     go to state 57
+    stmts         go to state 196
+    if-statement  go to state 59
+    lvalue        go to state 60
+
+
+State 196
+
+   10 EoLList: . EoLList EoL
+   11        | . EoL
+   46 stmts: stmts . EoLList statement
+   53 else-if-block: . EoLList "sino" else-block
+   54              | . EoLList
+   55 else-block: "si" expr opt-EoL "entonces" EoLList stmts . else-if-block
+
+    EoL  shift, and go to state 1
+
+    EoLList        go to state 172
+    else-if-block  go to state 197
+
+
+State 197
+
+   55 else-block: "si" expr opt-EoL "entonces" EoLList stmts else-if-block .
+
+    $default  reduce using rule 55 (else-block)

@@ -1,0 +1,3 @@
+/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/build/CMakeFiles/rebuild_cache.dir
+/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/build/CMakeFiles/edit_cache.dir
+/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/build/CMakeFiles/lpp.dir
