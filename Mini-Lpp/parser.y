@@ -245,28 +245,28 @@ subprogram-decl-list subprogramDecl
 subprogramDecl: 
 "funcion" "ID"  argument-opt ":" type EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
     {       
-        std::vector<AST::Node*> vars;
+        std::vector<AST::Node*> PARAM_FUNCION;
         int bytes = 8;
         for(auto &a : $3)
         {
             AST::Argument_N* arg = static_cast<AST::Argument_N*>(a);
             arg->pos = bytes;
-            vars.push_back(arg);
+            PARAM_FUNCION.push_back(arg);
             bytes += 4;
         }
-        $$ = new AST::Func_Decl($2, vars, $5, $7, new AST::Stmt_List($10));
+        $$ = new AST::Func_Decl($2, PARAM_FUNCION, $5, $7, new AST::Stmt_List($10));
     }
 |"procedimiento" "ID" argument-opt EoLList subtype-section "inicio" EoLList stmts EoLList "fin" EoL
     {
-        std::vector<AST::Node*> vars;
+        std::vector<AST::Node*> PARAM_PROCEDIMIENTO;
         int bytes = 8;
         for(auto &a : $3){
             AST::Argument_N* arg = static_cast<AST::Argument_N*>(a);
             arg->pos = bytes;
-            vars.push_back(arg);
+            PARAM_PROCEDIMIENTO.push_back(arg);
             bytes += 4;
     }
-    $$ = new AST::Proc_Decl($2, vars, $5, new AST::Stmt_List($8));
+    $$ = new AST::Proc_Decl($2, PARAM_PROCEDIMIENTO, $5, new AST::Stmt_List($8));
 }
 
 ;

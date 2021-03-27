@@ -47,6 +47,14 @@
 ":" return Expr::Parser::token::Colon;
 "^" return Expr::Parser::token::Caret;
 
+#Types
+"booleano" return Expr::Parser::token::Booleano;
+"caracter" return Expr::Parser::token::Caracter;
+"arreglo" return Expr::Parser::token::Arreglo;
+"real" return Expr::Parser::token::Real;
+"cadena" return Expr::Parser::token::Cadena;
+"entero" return Expr::Parser::token::Entero;
+
 #ReservedWords
 "es" return Expr::Parser::token::Es;
 "caso" return Expr::Parser::token::Caso;
@@ -61,12 +69,6 @@
 "var" return Expr::Parser::token::Var;
 "inicio" return Expr::Parser::token::Inicio;
 "fin" return Expr::Parser::token::Fin;
-"real" return Expr::Parser::token::Real;
-"cadena" return Expr::Parser::token::Cadena;
-"entero" return Expr::Parser::token::Entero;
-"booleano" return Expr::Parser::token::Booleano;
-"caracter" return Expr::Parser::token::Caracter;
-"arreglo" return Expr::Parser::token::Arreglo;
 "leer" return Expr::Parser::token::Leer;
 "escribir" return Expr::Parser::token::Escribir;
 "verdadero" return Expr::Parser::token::Verdadero;

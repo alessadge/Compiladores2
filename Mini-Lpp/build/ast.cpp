@@ -1,13 +1,13 @@
 /* ast.cpp.  Generated automatically by treecc */
-#line 28 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 33 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 
 #include "ast.h"
 int labels = 0;
 int strings = 0;
 int temps = 0;
+variable_list vars;
+ident_list identifiers;
 
-idList ids;
-varList vars;
 
 //-----------------------------------------------/
 //                  CLASSES
@@ -36,9 +36,9 @@ class ByteCounter{
             std::string id;
 };
 
-ByteCounter* currentFunction = nullptr;
+ByteCounter* crnt_Function = nullptr;
 std::vector<ByteCounter*> count_b;
-std::unordered_map<std::string, std::string> idTypes;
+std::unordered_map<std::string, std::string> ident_type;
 
 //-----------------------------------------------/
 //               FUNCTIONS
@@ -554,7 +554,7 @@ const char *Program_C::getKindName() const
 	return "Program_C";
 }
 
-Var_Decl::Var_Decl(Node * type, idList identifierList)
+Var_Decl::Var_Decl(Node * type, ident_list identifierList)
 	: Node()
 {
 	this->kind__ = Var_Decl_kind;
@@ -686,31 +686,6 @@ const char *NumExpr::getKindName() const
 	return "NumExpr";
 }
 
-BoolExpr::BoolExpr(string_t val)
-	: Expression()
-{
-	this->kind__ = BoolExpr_kind;
-	this->val = val;
-}
-
-BoolExpr::~BoolExpr()
-{
-	// not used
-}
-
-int BoolExpr::isA(int kind) const
-{
-	if(kind == BoolExpr_kind)
-		return 1;
-	else
-		return Expression::isA(kind);
-}
-
-const char *BoolExpr::getKindName() const
-{
-	return "BoolExpr";
-}
-
 CharExpr::CharExpr(int val)
 	: Expression()
 {
@@ -734,6 +709,31 @@ int CharExpr::isA(int kind) const
 const char *CharExpr::getKindName() const
 {
 	return "CharExpr";
+}
+
+BoolExpr::BoolExpr(string_t val)
+	: Expression()
+{
+	this->kind__ = BoolExpr_kind;
+	this->val = val;
+}
+
+BoolExpr::~BoolExpr()
+{
+	// not used
+}
+
+int BoolExpr::isA(int kind) const
+{
+	if(kind == BoolExpr_kind)
+		return 1;
+	else
+		return Expression::isA(kind);
+}
+
+const char *BoolExpr::getKindName() const
+{
+	return "BoolExpr";
 }
 
 IdExpr::IdExpr(string_t val)
@@ -1202,11 +1202,11 @@ const char *Stmt_List::getKindName() const
 	return "Stmt_List";
 }
 
-WhileStmt::WhileStmt(Node * condition, Node * block, string_t label_end, string_t label_start)
+WhileStmt::WhileStmt(Node * cond, Node * block, string_t label_end, string_t label_start)
 	: NodeStmts()
 {
 	this->kind__ = WhileStmt_kind;
-	this->condition = condition;
+	this->cond = cond;
 	this->block = block;
 	this->label_end = label_end;
 	this->label_start = label_start;
@@ -1259,11 +1259,11 @@ const char *ForStmt::getKindName() const
 	return "ForStmt";
 }
 
-RptStmt::RptStmt(Node * condition, Node * statements)
+RptStmt::RptStmt(Node * cond, Node * statements)
 	: NodeStmts()
 {
 	this->kind__ = RptStmt_kind;
-	this->condition = condition;
+	this->cond = cond;
 	this->statements = statements;
 }
 
@@ -1336,13 +1336,12 @@ const char *PrintStmt::getKindName() const
 }
 
 static void gen_code_1__(LessEqThanExpr *e)
-#line 294 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 382 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-    gen_code(e-> Expr1);
-    gen_code(e-> Expr2);
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
 
     e -> place = e->Expr2->place;
-
     std::ostringstream out;
     out <<  e->Expr1 -> asm_code << '\n'
         << e->Expr2 -> asm_code << '\n'
@@ -1351,39 +1350,37 @@ static void gen_code_1__(LessEqThanExpr *e)
         << "mov eax,0\n"
         << "setle al \n"
         << "mov " << e -> place << ",eax\n";
-
-    //std::cout << "LessThanExpr: \n" << out.str();
-    e -> asm_code = out.str();
+    e->asm_code = out.str();
 }
-#line 1359 "ast.cpp"
+#line 1356 "ast.cpp"
 
 static void gen_code_2__(GreaterEqThanExpr *e)
-#line 313 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
-{            //AST::paramNode* stuff = new AST::paramNode($2, "string", pos);
-    gen_code(e-> Expr2);
+#line 398 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+{        
+    gen_code(e->Expr2);
 
-    e -> place = e->Expr2->place;
+    e->place = e->Expr2->place;
 
     std::ostringstream out;
-    out <<  e->Expr1 -> asm_code << '\n'
+    out <<  e->Expr1-> asm_code << '\n'
         << e->Expr2 -> asm_code << '\n'
         << "mov eax," << e->Expr1->place << '\n'
         << "cmp eax," << e->place << '\n'
         << "mov eax,0\n"
         << "setge al\n"
-        << "mov " << e -> place << ",eax\n";
+        << "mov "<< e-> place<< ",eax\n";
 
-    e -> asm_code = out.str();
+    e->asm_code =out.str();
 }
-#line 1379 "ast.cpp"
+#line 1376 "ast.cpp"
 
 static void gen_code_3__(LessThanExpr *e)
-#line 256 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 347 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-    gen_code(e-> Expr1);
-    gen_code(e-> Expr2);
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
 
-    e -> place = e->Expr2->place;
+    e->place = e->Expr2->place;
 
     std::ostringstream out;
     out <<  e->Expr1 -> asm_code << '\n'
@@ -1393,17 +1390,15 @@ static void gen_code_3__(LessThanExpr *e)
         << "mov eax,0\n"
         << "setl al \n"
         << "mov " << e -> place << ",eax\n";
-
-    //std::cout << "LessThanExpr: \n" << out.str();
-    e -> asm_code = out.str();
+    e->asm_code = out.str();
 }
-#line 1401 "ast.cpp"
+#line 1396 "ast.cpp"
 
 static void gen_code_4__(GreaterThanExpr *e)
-#line 275 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 364 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-    gen_code(e-> Expr1);
-    gen_code(e-> Expr2);
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
 
     e -> place = e->Expr2->place;
 
@@ -1411,18 +1406,17 @@ static void gen_code_4__(GreaterThanExpr *e)
     out <<  e->Expr1 -> asm_code << '\n'
         << e->Expr2 -> asm_code << '\n'
         << "mov eax," << e->Expr1->place << '\n'
-        << "cmp eax," << e->place << '\n'
+        << "cmp eax,"<< e->place << '\n'
         << "mov eax,0\n"
         << "setg al \n"
         << "mov " << e -> place << ",eax\n";
 
-    //std::cout << "LessThanExpr: \n" << out.str();
-    e -> asm_code = out.str();
+    e->asm_code = out.str();
 }
-#line 1423 "ast.cpp"
+#line 1417 "ast.cpp"
 
 static void gen_code_5__(EqualExpr *e)
-#line 331 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 416 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e->Expr1);
     gen_code(e->Expr2);
@@ -1431,20 +1425,20 @@ static void gen_code_5__(EqualExpr *e)
 
     std::ostringstream out;
 
-    out << e->Expr1->asm_code << '\n'
-        << e->Expr2->asm_code << '\n'
+    out << e->Expr1->asm_code<< '\n'
+        << e->Expr2->asm_code<< '\n'
         << "mov eax," << e->Expr1->place << '\n'
-        << "cmp eax," << e->place << '\n'
+        << "cmp eax,"<< e->place << '\n'
         << "mov eax,0\n"
         << "sete al\n"
-        << "mov " << e->place << ",eax\n";
+        << "mov "<< e->place << ",eax\n";
     
-    e-> asm_code = out.str();
+    e->asm_code= out.str();
 }
-#line 1445 "ast.cpp"
+#line 1439 "ast.cpp"
 
 static void gen_code_6__(NotEqualExpr *e)
-#line 351 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 436 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e->Expr1);
     gen_code(e->Expr2);
@@ -1452,24 +1446,23 @@ static void gen_code_6__(NotEqualExpr *e)
     e->place = e->Expr2->place;
 
     std::ostringstream out;
-
     out << e->Expr1->asm_code << '\n'
         << e->Expr2->asm_code << '\n'
         << "mov eax," << e->Expr1->place << '\n'
         << "cmp eax," << e->place << '\n'
         << "mov eax,0\n"
         << "setne al\n"
-        << "mov " << e->place << ",eax\n";
+        << "mov "<< e->place << ",eax\n";
     
-    e-> asm_code = out.str();
+    e->asm_code = out.str();
 }
-#line 1467 "ast.cpp"
+#line 1460 "ast.cpp"
 
 static void gen_code_7__(AndExpr *e)
-#line 370 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 454 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-    gen_code(e-> Expr1);
-    gen_code(e-> Expr2);
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
 
     e -> place = e->Expr2->place;
     string_t label_false = newLabel();
@@ -1481,23 +1474,22 @@ static void gen_code_7__(AndExpr *e)
         << e->Expr1 -> asm_code << '\n'
         << e->Expr2 -> asm_code << '\n'
         << "cmp " << e->Expr1 -> place << ",0\n"
-        << "je " << label_false << '\n'
+        << "je "<< label_false << '\n'
         << "cmp " << e->Expr2->place << ",0\n"
         << "je " << label_false << '\n'
-        << "mov " << e->place << ",1 " << '\n'
-        << "jmp " << label_end << '\n'
-        << label_false << ":\n"
-        << "mov " << e->place << ",0\n"
+        << "mov "<< e->place << ",1 " << '\n'
+        << "jmp "<< label_end << '\n'
+        << label_false<< ":\n"
+        << "mov "<< e->place << ",0\n"
         << label_end << ":\n";
 
-    e -> asm_code = out.str();
-
+    e->asm_code = out.str();
 
 }
-#line 1498 "ast.cpp"
+#line 1490 "ast.cpp"
 
 static void gen_code_8__(OrExpr *e)
-#line 398 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 481 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e->Expr1);
     gen_code(e->Expr2);
@@ -1507,9 +1499,7 @@ static void gen_code_8__(OrExpr *e)
     string_t label_end = newLabel();
 
     std::ostringstream out;
-
-    out
-        << e->Expr1->asm_code << '\n'
+    out << e->Expr1->asm_code << '\n'
         << e->Expr2->asm_code  << '\n'
         << "cmp " << e->Expr1 -> place << ",1\n"
         << "je " << label_true << '\n'
@@ -1521,21 +1511,20 @@ static void gen_code_8__(OrExpr *e)
         << "mov " << e->place << ",1\n"
         << label_end << ":\n";
 
-        e->asm_code = out.str();
+        e->asm_code =out.str();
 }
-#line 1527 "ast.cpp"
+#line 1517 "ast.cpp"
 
 static void gen_code_9__(AssignStmt *e)
-#line 949 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 884 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e-> Expr1);
     gen_code(e-> Expr2);
     std::ostringstream out;
 
     if(e->Expr1->isA(IdExpr_kind)){
-        //casteando el exp1 a un id para agregar a la lista de ids
         IdExpr* exp1 = static_cast<IdExpr*>(e->Expr1);
-        ids.push_back(exp1->val);
+        identifiers.push_back(exp1->val);
 
         e->place = e->Expr1 -> place;
 
@@ -1547,28 +1536,24 @@ static void gen_code_9__(AssignStmt *e)
     }else{
         ArrayExpr* exp1 = static_cast<ArrayExpr*>(e->Expr1);
         NumExpr* index = static_cast<NumExpr*> (exp1->pos);
-        //si se esta asignando a un arreglo
 
         out << e->Expr2->asm_code << '\n'
-            //<< e->Expr1->asm_code << '\n'
             << "mov ecx, " << e->Expr2->place << '\n'
-            << "mov dword[" << exp1-> id << "+" << index -> val << " *4-4],ecx\n"
+            << "mov dword[" << exp1-> id << "+" << index -> val << "*4-4],ecx\n"
             << "mov ecx, dword[" << exp1-> id << "+" << index -> val << "*4-4]\n"
             << "mov " << e->Expr2 ->place << ",ecx\n\n";
             e->place = e->Expr2->place;
         
     }
-    
     e->asm_code = out.str();
 }
-#line 1565 "ast.cpp"
+#line 1551 "ast.cpp"
 
 static void gen_code_10__(SubExpr *e)
-#line 483 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 274 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e-> Expr1);
     gen_code(e-> Expr2);
-    //e->place = e->Expr1->place;
     e -> place = newTemp();
     std::ostringstream out;
 
@@ -1582,15 +1567,13 @@ static void gen_code_10__(SubExpr *e)
     e -> asm_code = out.str();
 
 }
-#line 1586 "ast.cpp"
+#line 1571 "ast.cpp"
 
 static void gen_code_11__(AddExpr *e)
-#line 466 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 259 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e-> Expr1);
     gen_code(e-> Expr2);
-
-    //e -> place = e->Expr1->place;
     e->place = newTemp();
     std::ostringstream out;
 
@@ -1602,16 +1585,15 @@ static void gen_code_11__(AddExpr *e)
         
     e -> asm_code = out.str();
 }
-#line 1606 "ast.cpp"
+#line 1589 "ast.cpp"
 
 static void gen_code_12__(DivExpr *e)
-#line 502 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 292 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e-> Expr1);
     gen_code(e-> Expr2);
 
     e -> place = newTemp();
-    //std::cout << "EPLACE " << e->Expr1->place << std::endl;
     std::ostringstream out;
 
     out << e->Expr1 ->asm_code << '\n'
@@ -1624,10 +1606,10 @@ static void gen_code_12__(DivExpr *e)
     e -> asm_code = out.str();
 
 }
-#line 1628 "ast.cpp"
+#line 1610 "ast.cpp"
 
 static void gen_code_13__(ModExpr *e)
-#line 521 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 310 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e-> Expr1);
     gen_code(e-> Expr2);
@@ -1645,10 +1627,10 @@ static void gen_code_13__(ModExpr *e)
 
     e -> asm_code = out.str();
 }
-#line 1649 "ast.cpp"
+#line 1631 "ast.cpp"
 
 static void gen_code_14__(MultExpr *e)
-#line 539 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 328 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
 
     gen_code(e-> Expr1);
@@ -1667,57 +1649,56 @@ static void gen_code_14__(MultExpr *e)
     e -> asm_code = out.str();
 
 }
-#line 1671 "ast.cpp"
+#line 1653 "ast.cpp"
 
 static void gen_code_15__(NumExpr *e)
-#line 440 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 520 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+{
+    e->place = newTemp();
+    e->asm_code = "mov " + e -> place + "," + std::to_string(e -> val);
+}
+#line 1661 "ast.cpp"
+
+static void gen_code_16__(CharExpr *e)
+#line 915 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     e -> place = newTemp();
     e -> asm_code = "mov " + e -> place + "," + std::to_string(e -> val);
 }
-#line 1679 "ast.cpp"
+#line 1669 "ast.cpp"
 
-static void gen_code_16__(BoolExpr *e)
-#line 992 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+static void gen_code_17__(BoolExpr *e)
+#line 927 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     if(e->val == "t")
         e->place = "dword[true]";
     else
         e->place = "dword[false]";
 }
-#line 1689 "ast.cpp"
-
-static void gen_code_17__(CharExpr *e)
-#line 999 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
-{
-    e -> place = newTemp();
-    e -> asm_code = "mov " + e -> place + "," + std::to_string(e -> val);
-}
-#line 1697 "ast.cpp"
+#line 1679 "ast.cpp"
 
 static void gen_code_18__(IdExpr *e)
-#line 445 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 525 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-    if(currentFunction != nullptr){
-        e->place = currentFunction->getPlace(e->val);
+    if(crnt_Function != nullptr){
+        e->place = crnt_Function->getPlace(e->val);
     }else{
         e->place = "dword["+e->val+"]";
         e-> asm_code = "";
-        ids.push_back(e->val);
+        identifiers.push_back(e->val);
     }
     
 }
-#line 1711 "ast.cpp"
+#line 1693 "ast.cpp"
 
 static void gen_code_19__(ArrayExpr *e)
-#line 424 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 505 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e->pos);
     std::ostringstream out;
-    e-> place = newTemp();
+    e->place = newTemp();
 
     NumExpr* arrPos = static_cast<NumExpr*> (e->pos);
-
     out << e->pos->asm_code << '\n'
         << "mov ebx," << e->pos->place << '\n'
         << "mov ecx," << "dword[" << e->id << "+ebx*4-4]\n"
@@ -1725,20 +1706,20 @@ static void gen_code_19__(ArrayExpr *e)
     
     e->asm_code = out.str();
 }
-#line 1729 "ast.cpp"
+#line 1710 "ast.cpp"
 
 static void gen_code_20__(S_Constant *e)
-#line 985 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 920 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     string_t strName = newStr();
     vars.push_back(std::make_pair(strName, e->val));
 
     e->place = strName;
 }
-#line 1739 "ast.cpp"
+#line 1720 "ast.cpp"
 
 static void gen_code_21__(IfStmt *e)
-#line 558 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 580 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e->cond);
     gen_code(e->trueBlock);
@@ -1770,10 +1751,10 @@ static void gen_code_21__(IfStmt *e)
     e->asm_code = out.str();
     
 }
-#line 1774 "ast.cpp"
+#line 1755 "ast.cpp"
 
 static void gen_code_22__(Stmt_List *e)
-#line 456 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 663 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     for(auto &stmt : e->statements){
         gen_code(stmt);
@@ -1781,12 +1762,12 @@ static void gen_code_22__(Stmt_List *e)
         e->asm_code += stmt->asm_code;
     }
 }
-#line 1785 "ast.cpp"
+#line 1766 "ast.cpp"
 
 static void gen_code_23__(WhileStmt *e)
-#line 590 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 612 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-    gen_code(e->condition);
+    gen_code(e->cond);
     gen_code(e->block);
     e-> label_start = newLabel();
     e-> label_end = newLabel();
@@ -1794,8 +1775,8 @@ static void gen_code_23__(WhileStmt *e)
     std::ostringstream out;
 
     out << e->label_start << ":\n"
-        << e->condition->asm_code << '\n'
-        << "cmp " << e->condition->place << ", 0\n"
+        << e->cond->asm_code << '\n'
+        << "cmp " << e->cond->place << ", 0\n"
         << "je " << e->label_end << '\n'
         << e->block->asm_code << '\n'
         << "jmp " << e->label_start << '\n'
@@ -1803,10 +1784,10 @@ static void gen_code_23__(WhileStmt *e)
 
     e->asm_code = out.str();
 }
-#line 1807 "ast.cpp"
+#line 1788 "ast.cpp"
 
 static void gen_code_24__(ForStmt *e)
-#line 610 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 536 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e->assign);
     gen_code(e->cond);
@@ -1829,15 +1810,13 @@ static void gen_code_24__(ForStmt *e)
         << e->label_end << ":\n";
 
     e-> asm_code = out.str();
-
-
 }
-#line 1836 "ast.cpp"
+#line 1815 "ast.cpp"
 
 static void gen_code_25__(RptStmt *e)
-#line 636 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 560 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-    gen_code(e->condition);
+    gen_code(e->cond);
     gen_code(e->statements);
 
     std::ostringstream out;
@@ -1847,18 +1826,18 @@ static void gen_code_25__(RptStmt *e)
 
     out << repeatL << ":\n"
         << e-> statements ->asm_code << '\n'
-        << e-> condition->asm_code << '\n'
-        << "cmp " << e->condition->place << ", 1\n"
+        << e-> cond->asm_code << '\n'
+        << "cmp " << e->cond->place << ", 1\n"
         << "je " << exitL << "\n"
         << "jmp " << repeatL << "\n"
         << exitL << ":\n";
 
     e->asm_code = out.str();
 }
-#line 1859 "ast.cpp"
+#line 1838 "ast.cpp"
 
 static void gen_code_26__(RetrnStmt *e)
-#line 757 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 766 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e->expr);
     e->place = e->expr->place;
@@ -1872,10 +1851,10 @@ static void gen_code_26__(RetrnStmt *e)
 
     e->asm_code = out.str();
 }
-#line 1876 "ast.cpp"
+#line 1855 "ast.cpp"
 
 static void gen_code_27__(PrintStmt *e)
-#line 853 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 810 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     std::ostringstream out;
 
@@ -1883,99 +1862,82 @@ static void gen_code_27__(PrintStmt *e)
         gen_code(a);
         if(a->isA(IdExpr_kind)){
             IdExpr* ID = static_cast<IdExpr*>(a);
-
             out << a->asm_code << std::endl;
-            if(idTypes[ID->val] == "int" || idTypes[ID->val] == "char"){
+            if(ident_type[ID->val] == "int" || ident_type[ID->val] == "char"){
                 out << "push " << a->place << "\n";
-            }else if(idTypes[ID->val] == "bool"){
+            }else if(ident_type[ID->val] == "bool"){
                 out << getBoolPrint(a->place);
-            }else if(idTypes[ID->val] == "char"){
+            }else if(ident_type[ID->val] == "char"){
                 out << "push charFormat\n"
                 << "call printf\n";
             }
-
-
-            if(idTypes[ID->val] == "int"){
+            if(ident_type[ID->val] == "int"){
                 out << "push format\n"
                     << "call printf\n";
-            }else if(idTypes[ID->val] == "char"){
+            }else if(ident_type[ID->val] == "char"){
                     out << "push charFormat\n"
                         << "call printf\n";
             }
 
-            if(idTypes[ID->val] == "int" || idTypes[ID->val] == "char" ){
+            if(ident_type[ID->val] == "int" || ident_type[ID->val] == "char" ){
                 out << "add esp,8\n";
-            }else if(idTypes[ID->val] == "bool"){
-                //out << "add esp, 4\n";
+            }else if(ident_type[ID->val] == "bool"){}
+            }else if(a->isA(NumExpr_kind)){
+                out << a->asm_code << '\n'
+                    << "push " << a->place << '\n'
+                    << "push format\n"
+                    << "call printf\n"
+                    << "add esp,8\n"; 
             }
-            
-        }else if(a->isA(NumExpr_kind)){
-            //std::cout << "is num\n";
-            out << a->asm_code << '\n'
-                << "push " << a->place << '\n'
-                << "push format\n"
-                << "call printf\n"
-                << "add esp,8\n"; 
+            else if(a->isA(S_Constant_kind)){
+                out << a->asm_code << '\n'
+                    << "push " << a -> place << '\n'
+                    << "call printf\n"
+                    << "add esp,4\n"; 
+            }else if(a->isA(BinaryExpression_kind)){
+                BinaryExpression* bin = static_cast<BinaryExpression*>(a);
+
+                gen_code(a);
+                out << a->asm_code << '\n'
+                    << "push " << a->place << "\n"
+                    << "push format\n"
+                    << "call printf\n"
+                    << "add esp,8\n";
+            }else if(a->isA(Program_Call_kind)){
+                gen_code(a);
+                out << a-> asm_code << '\n'
+                    << "push eax\n"
+                    << "push format\n"
+                    << "call printf\n"
+                    << "add esp,8\n";
+            }else if(a->isA(ArrayExpr_kind)){
+                gen_code(a);
+                out << a->asm_code << '\n'
+                    << "push " << a->place << '\n'
+                    << "push format\n"
+                    << "call printf\n"
+                    << "add esp, 8\n";
+            }else if(a->isA(CharExpr_kind)){
+                CharExpr* charE = static_cast<CharExpr*>(a);
+                out << a->asm_code << '\n'
+                    << "push " << charE->val << "\n"
+                    << "push charFormat\n"
+                    << "call printf\n"
+                    << "add esp,8\n";
+            } 
         }
-        else if(a->isA(S_Constant_kind)){
-            
-            out << a->asm_code << '\n'
-                << "push " << a -> place << '\n'
-                << "call printf\n"
-                << "add esp,4\n"; 
-
-
-        }else if(a->isA(BinaryExpression_kind)){
-            BinaryExpression* bin = static_cast<BinaryExpression*>(a);
-
-            gen_code(a);
-        
-            out << a->asm_code << '\n'
-                << "push " << a->place << "\n"
-                << "push format\n"
-                << "call printf\n"
-                << "add esp,8\n";
-
-        }else if(a->isA(Program_Call_kind)){
-            gen_code(a);
-            out << a-> asm_code << '\n'
-                << "push eax\n"
-                << "push format\n"
-                << "call printf\n"
-                << "add esp,8\n";
-        }else if(a->isA(ArrayExpr_kind)){
-            gen_code(a);
-            out << a->asm_code << '\n'
-                << "push " << a->place << '\n'
-                << "push format\n"
-                << "call printf\n"
-                << "add esp, 8\n";
-        }else if(a->isA(CharExpr_kind)){
-            //std::cout << "is char\n";
-            CharExpr* charE = static_cast<CharExpr*>(a);
-            out << a->asm_code << '\n'
-                << "push " << charE->val << "\n"
-                << "push charFormat\n"
-                << "call printf\n"
-                << "add esp,8\n";
-        }
-        
+        e->asm_code = out.str();
     }
-
-    e->asm_code = out.str();
-
-}
-#line 1969 "ast.cpp"
+#line 1932 "ast.cpp"
 
 static void gen_code_28__(Proc_Decl *e)
-#line 690 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 671 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     
     std::ostringstream out;
     ByteCounter* funcion = new ByteCounter(e->procedureID);
     std::vector<std::pair<std::string, std::string>> vectorTemp;
     std::vector<std::string> refsTemp;
-
     for(auto &a : e->args){
         AST::Argument_N* arg = static_cast<AST::Argument_N*>(a);
         if(arg->isRef){
@@ -1987,7 +1949,7 @@ static void gen_code_28__(Proc_Decl *e)
     count_b.push_back(funcion);
     funcion->params = vectorTemp;
     
-    currentFunction = funcion;
+    crnt_Function = funcion;
     gen_code(e->statements);
     out << e-> procedureID << ":\n"
         << "push ebp\n"
@@ -1997,14 +1959,13 @@ static void gen_code_28__(Proc_Decl *e)
         << "mov esp,ebp\n"
         << "pop ebp\n"
         << "ret\n";
-
     e->asm_code = out.str();
-    currentFunction = nullptr;
+    crnt_Function = nullptr;
 }
-#line 2005 "ast.cpp"
+#line 1966 "ast.cpp"
 
 static void gen_code_29__(Func_Decl *e)
-#line 657 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 631 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     std::ostringstream out;
 
@@ -2023,7 +1984,7 @@ static void gen_code_29__(Func_Decl *e)
     count_b.push_back(funcion);
     funcion->params = vectorTemp;
     
-    currentFunction = funcion;
+    crnt_Function = funcion;
     gen_code(e->statements);
     out << e-> functionID << ":\n"
         << "push ebp\n"
@@ -2032,22 +1993,19 @@ static void gen_code_29__(Func_Decl *e)
         << "mov esp,ebp\n"
         << "pop ebp\n"
         << "ret\n";
-
     e->asm_code = out.str();
-    currentFunction = nullptr;
+    crnt_Function = nullptr;
 }
-#line 2040 "ast.cpp"
+#line 2000 "ast.cpp"
 
 static void gen_code_30__(Program_Call *e)
-#line 723 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 737 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     e->place = newTemp();
     std::ostringstream out;
 
     std::vector<AST::Node*> params = e->args;
-    //pushing de derecha a izq
     std::reverse(params.begin(), params.end());
-
     for(auto &param: params){
         gen_code(param);
 
@@ -2061,9 +2019,7 @@ static void gen_code_30__(Program_Call *e)
             out << param ->asm_code << '\n'
                 << "push " << param->place << '\n';
         }
-
     }
-        
     out << "call " << e->id << '\n'
         << "add esp," <<  (e->args.size())*4 << '\n'
         << "mov " <<  e->place << ",eax\n";
@@ -2072,10 +2028,10 @@ static void gen_code_30__(Program_Call *e)
     e->asm_code = out.str();
 
 }
-#line 2076 "ast.cpp"
+#line 2032 "ast.cpp"
 
 static void gen_code_31__(Program_C *e)
-#line 776 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 702 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     gen_code(e->varSection);
     gen_code(e->subprogramSection);
@@ -2086,10 +2042,8 @@ static void gen_code_31__(Program_C *e)
     for(int i = 0; i< temps; i++){
         tempData << "tmp" << i << " dd 0\n";
     }
-    //agregando los S_Constanttants en la seccion de data
     for (auto a: vars){
         stringIDs << a.first << " db \'" << a.second << "\',0 ,10\n";
-        //first es el nombre de la variable,second es la string
     }
     std::ostringstream out;
     out << "extern printf\n"
@@ -2097,7 +2051,6 @@ static void gen_code_31__(Program_C *e)
         << "section .data\n"
         << "format db '%d',0\n"
         << "charFormat db '%c',0\n"
-        //aqui revisar si hay bools definidos para no tener que hacer pushes innecesarios
         << "true dd 1\n"
         << "false dd 0\n"
         << "Truep db 'Verdadero',0\n"
@@ -2113,10 +2066,10 @@ static void gen_code_31__(Program_C *e)
 
     e->asm_code = out.str();
 }
-#line 2117 "ast.cpp"
+#line 2070 "ast.cpp"
 
 static void gen_code_32__(Var_Decl *e)
-#line 816 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 780 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
     //iniciar las variables en 0
     std::ostringstream out;
@@ -2127,41 +2080,39 @@ static void gen_code_32__(Var_Decl *e)
         Type_N * typeN = static_cast<Type_N*>(e->type);
 
         if(typeN-> type == "int"){
-            idTypes[var] = "int";
+            ident_type[var] = "int";
         }else if (typeN-> type == "bool"){
-            idTypes[var] = "bool";
+            ident_type[var] = "bool";
         }else if (typeN-> type == "char"){
-            idTypes[var] = "char";
+            ident_type[var] = "char";
         }else{
-            idTypes[var] = "arr";
+            ident_type[var] = "arr";
         }
 
         if(typeN-> type != "arr"){
             out << var << " dd 0\n";
         }else{
-            //si es arreglo
             out << var << " times " << typeN -> arraySize << " dd 0\n";
         }
         
     }
-
     e->asm_code = out.str();
 }
-#line 2151 "ast.cpp"
+#line 2102 "ast.cpp"
 
 static void gen_code_33__(Type_N *e)
-#line 944 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 938 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-
+//Solo lo instancie para evitar error 
 }
-#line 2158 "ast.cpp"
+#line 2109 "ast.cpp"
 
 static void gen_code_34__(Argument_N *e)
-#line 848 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
+#line 934 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 {
-
+//Solo lo instancie para evitar error en Argument_N
 }
-#line 2165 "ast.cpp"
+#line 2116 "ast.cpp"
 
 void gen_code(Node * e__)
 {
@@ -2257,15 +2208,15 @@ void gen_code(Node * e__)
 		}
 		break;
 
-		case BoolExpr_kind:
+		case CharExpr_kind:
 		{
-			gen_code_16__((BoolExpr *)e__);
+			gen_code_16__((CharExpr *)e__);
 		}
 		break;
 
-		case CharExpr_kind:
+		case BoolExpr_kind:
 		{
-			gen_code_17__((CharExpr *)e__);
+			gen_code_17__((BoolExpr *)e__);
 		}
 		break;
 

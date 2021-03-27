@@ -4,7 +4,7 @@
 #line 4 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/ast.tc"
 
 //-----------------------------------------------/
-//              BINARY  EXPRESSIONS
+//                 INCLUDES
 //-----------------------------------------------/
 #include <vector>
 #include <set>
@@ -20,10 +20,15 @@ namespace AST{
 
 using node_l = std::vector<AST::Node*>;
 using string_t = std::string;
-using idList = std::list<std::string>;
-using varList = std::vector<std::pair<std::string,std::string>>;
 
-#line 27 "ast.h"
+
+//-----------------------------------------------/
+//              LIST  VARIABLES
+//-----------------------------------------------/
+using variable_list = std::vector<std::pair<std::string,std::string>>;
+using ident_list = std::list<std::string>;
+
+#line 32 "ast.h"
 
 #include <new>
 
@@ -42,8 +47,8 @@ const int Type_N_kind = 36;
 const int Argument_N_kind = 37;
 const int BinaryExpression_kind = 3;
 const int NumExpr_kind = 18;
-const int BoolExpr_kind = 19;
-const int CharExpr_kind = 20;
+const int CharExpr_kind = 19;
+const int BoolExpr_kind = 20;
 const int IdExpr_kind = 21;
 const int ArrayExpr_kind = 22;
 const int S_Constant_kind = 29;
@@ -81,8 +86,8 @@ class Type_N;
 class Argument_N;
 class BinaryExpression;
 class NumExpr;
-class BoolExpr;
 class CharExpr;
+class BoolExpr;
 class IdExpr;
 class ArrayExpr;
 class S_Constant;
@@ -121,7 +126,7 @@ private:
 	struct YYNODESTATE_block *blocks__;
 	struct YYNODESTATE_push *push_stack__;
 	int used__;
-#line 125 "ast.h"
+#line 130 "ast.h"
 private:
 
 	static YYNODESTATE *state__;
@@ -316,12 +321,12 @@ class Var_Decl : public Node
 {
 public:
 
-	Var_Decl(Node * type, idList identifierList);
+	Var_Decl(Node * type, ident_list identifierList);
 
 public:
 
 	Node * type;
-	idList identifierList;
+	ident_list identifierList;
 
 
 	virtual int isA(int kind) const;
@@ -419,26 +424,6 @@ protected:
 
 };
 
-class BoolExpr : public Expression
-{
-public:
-
-	BoolExpr(string_t val);
-
-public:
-
-	string_t val;
-
-
-	virtual int isA(int kind) const;
-	virtual const char *getKindName() const;
-
-protected:
-
-	virtual ~BoolExpr();
-
-};
-
 class CharExpr : public Expression
 {
 public:
@@ -456,6 +441,26 @@ public:
 protected:
 
 	virtual ~CharExpr();
+
+};
+
+class BoolExpr : public Expression
+{
+public:
+
+	BoolExpr(string_t val);
+
+public:
+
+	string_t val;
+
+
+	virtual int isA(int kind) const;
+	virtual const char *getKindName() const;
+
+protected:
+
+	virtual ~BoolExpr();
 
 };
 
@@ -820,11 +825,11 @@ class WhileStmt : public NodeStmts
 {
 public:
 
-	WhileStmt(Node * condition, Node * block, string_t label_end, string_t label_start);
+	WhileStmt(Node * cond, Node * block, string_t label_end, string_t label_start);
 
 public:
 
-	Node * condition;
+	Node * cond;
 	Node * block;
 	string_t label_end;
 	string_t label_start;
@@ -867,11 +872,11 @@ class RptStmt : public NodeStmts
 {
 public:
 
-	RptStmt(Node * condition, Node * statements);
+	RptStmt(Node * cond, Node * statements);
 
 public:
 
-	Node * condition;
+	Node * cond;
 	Node * statements;
 
 

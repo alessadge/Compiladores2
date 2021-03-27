@@ -3,7 +3,7 @@
 
 %decls %{
 //-----------------------------------------------/
-//              BINARY  EXPRESSIONS
+//                 INCLUDES
 //-----------------------------------------------/
 #include <vector>
 #include <set>
@@ -19,8 +19,13 @@ namespace AST{
 
 using node_l = std::vector<AST::Node*>;
 using string_t = std::string;
-using idList = std::list<std::string>;
-using varList = std::vector<std::pair<std::string,std::string>>;
+
+
+//-----------------------------------------------/
+//              LIST  VARIABLES
+//-----------------------------------------------/
+using variable_list = std::vector<std::pair<std::string,std::string>>;
+using ident_list = std::list<std::string>;
 
 %}
 
@@ -30,9 +35,9 @@ using varList = std::vector<std::pair<std::string,std::string>>;
 int labels = 0;
 int strings = 0;
 int temps = 0;
+variable_list vars;
+ident_list identifiers;
 
-idList ids;
-varList vars;
 
 //-----------------------------------------------/
 //                  CLASSES
@@ -61,9 +66,9 @@ class ByteCounter{
             std::string id;
 };
 
-ByteCounter* currentFunction = nullptr;
+ByteCounter* crnt_Function = nullptr;
 std::vector<ByteCounter*> count_b;
-std::unordered_map<std::string, std::string> idTypes;
+std::unordered_map<std::string, std::string> ident_type;
 
 //-----------------------------------------------/
 //               FUNCTIONS
@@ -140,12 +145,12 @@ std::string getBoolPrint(string_t place){
     int val;
 }
 
-%node BoolExpr Expression = {
-    string_t val;
-}
-
 %node CharExpr Expression = {
     int val;
+}
+
+%node BoolExpr Expression = {
+    string_t val;
 }
 
 %node IdExpr Expression={
@@ -175,7 +180,7 @@ std::string getBoolPrint(string_t place){
 }
 
 %node WhileStmt NodeStmts = {
-    Node* condition;
+    Node* cond;
     Node* block;
     string_t label_end;
     string_t label_start;
@@ -190,9 +195,8 @@ std::string getBoolPrint(string_t place){
 }
 
 %node RptStmt NodeStmts = {
-    Node* condition;
+    Node* cond;
     Node* statements;
-    
 }
 
 %node S_Constant Expression = {
@@ -230,7 +234,7 @@ std::string getBoolPrint(string_t place){
 }
 %node Var_Decl Node = {
     Node* type;
-    idList identifierList;
+    ident_list identifierList;
 }
 
 %node Type_N Node = {
@@ -242,7 +246,7 @@ std::string getBoolPrint(string_t place){
 %node Argument_N Node = {
     Node* type;
     string_t identifier;
-    int isRef; //1 significa que es parametro por referencia, 0 que no
+    int isRef; 
     int pos;
 }
 
@@ -250,224 +254,11 @@ std::string getBoolPrint(string_t place){
     node_l args;
 }
 
-
 %operation void gen_code(Node *e);
-
-gen_code(LessThanExpr){
-    gen_code(e-> Expr1);
-    gen_code(e-> Expr2);
-
-    e -> place = e->Expr2->place;
-
-    std::ostringstream out;
-    out <<  e->Expr1 -> asm_code << '\n'
-        << e->Expr2 -> asm_code << '\n'
-        << "mov eax," << e->Expr1->place << '\n'
-        << "cmp eax," << e->place << '\n'
-        << "mov eax,0\n"
-        << "setl al \n"
-        << "mov " << e -> place << ",eax\n";
-
-    //std::cout << "LessThanExpr: \n" << out.str();
-    e -> asm_code = out.str();
-}
-
-gen_code(GreaterThanExpr){
-    gen_code(e-> Expr1);
-    gen_code(e-> Expr2);
-
-    e -> place = e->Expr2->place;
-
-    std::ostringstream out;
-    out <<  e->Expr1 -> asm_code << '\n'
-        << e->Expr2 -> asm_code << '\n'
-        << "mov eax," << e->Expr1->place << '\n'
-        << "cmp eax," << e->place << '\n'
-        << "mov eax,0\n"
-        << "setg al \n"
-        << "mov " << e -> place << ",eax\n";
-
-    //std::cout << "LessThanExpr: \n" << out.str();
-    e -> asm_code = out.str();
-}
-
-gen_code(LessEqThanExpr){
-    gen_code(e-> Expr1);
-    gen_code(e-> Expr2);
-
-    e -> place = e->Expr2->place;
-
-    std::ostringstream out;
-    out <<  e->Expr1 -> asm_code << '\n'
-        << e->Expr2 -> asm_code << '\n'
-        << "mov eax," << e->Expr1->place << '\n'
-        << "cmp eax," << e->place << '\n'
-        << "mov eax,0\n"
-        << "setle al \n"
-        << "mov " << e -> place << ",eax\n";
-
-    //std::cout << "LessThanExpr: \n" << out.str();
-    e -> asm_code = out.str();
-}
-
-gen_code(GreaterEqThanExpr){            //AST::paramNode* stuff = new AST::paramNode($2, "string", pos);
-    gen_code(e-> Expr2);
-
-    e -> place = e->Expr2->place;
-
-    std::ostringstream out;
-    out <<  e->Expr1 -> asm_code << '\n'
-        << e->Expr2 -> asm_code << '\n'
-        << "mov eax," << e->Expr1->place << '\n'
-        << "cmp eax," << e->place << '\n'
-        << "mov eax,0\n"
-        << "setge al\n"
-        << "mov " << e -> place << ",eax\n";
-
-    e -> asm_code = out.str();
-}
-
-
-gen_code(EqualExpr){
-    gen_code(e->Expr1);
-    gen_code(e->Expr2);
-
-    e->place = e->Expr2->place;
-
-    std::ostringstream out;
-
-    out << e->Expr1->asm_code << '\n'
-        << e->Expr2->asm_code << '\n'
-        << "mov eax," << e->Expr1->place << '\n'
-        << "cmp eax," << e->place << '\n'
-        << "mov eax,0\n"
-        << "sete al\n"
-        << "mov " << e->place << ",eax\n";
-    
-    e-> asm_code = out.str();
-}
-
-
-gen_code(NotEqualExpr){
-    gen_code(e->Expr1);
-    gen_code(e->Expr2);
-
-    e->place = e->Expr2->place;
-
-    std::ostringstream out;
-
-    out << e->Expr1->asm_code << '\n'
-        << e->Expr2->asm_code << '\n'
-        << "mov eax," << e->Expr1->place << '\n'
-        << "cmp eax," << e->place << '\n'
-        << "mov eax,0\n"
-        << "setne al\n"
-        << "mov " << e->place << ",eax\n";
-    
-    e-> asm_code = out.str();
-}
-
-gen_code(AndExpr){
-    gen_code(e-> Expr1);
-    gen_code(e-> Expr2);
-
-    e -> place = e->Expr2->place;
-    string_t label_false = newLabel();
-    string_t label_end = newLabel();
-
-    std::ostringstream out;
-
-    out 
-        << e->Expr1 -> asm_code << '\n'
-        << e->Expr2 -> asm_code << '\n'
-        << "cmp " << e->Expr1 -> place << ",0\n"
-        << "je " << label_false << '\n'
-        << "cmp " << e->Expr2->place << ",0\n"
-        << "je " << label_false << '\n'
-        << "mov " << e->place << ",1 " << '\n'
-        << "jmp " << label_end << '\n'
-        << label_false << ":\n"
-        << "mov " << e->place << ",0\n"
-        << label_end << ":\n";
-
-    e -> asm_code = out.str();
-
-
-}
-
-gen_code(OrExpr){
-    gen_code(e->Expr1);
-    gen_code(e->Expr2);
-
-    e->place = newTemp();
-    string_t label_true = newLabel();
-    string_t label_end = newLabel();
-
-    std::ostringstream out;
-
-    out
-        << e->Expr1->asm_code << '\n'
-        << e->Expr2->asm_code  << '\n'
-        << "cmp " << e->Expr1 -> place << ",1\n"
-        << "je " << label_true << '\n'
-        << "cmp " << e->Expr2->place << ",1\n"
-        << "je " << label_true << '\n'
-        << "mov " << e->place << ",0\n"
-        << "jmp " << label_end << '\n'
-        << label_true << ":\n"
-        << "mov " << e->place << ",1\n"
-        << label_end << ":\n";
-
-        e->asm_code = out.str();
-}
-
-gen_code(ArrayExpr){
-    gen_code(e->pos);
-    std::ostringstream out;
-    e-> place = newTemp();
-
-    NumExpr* arrPos = static_cast<NumExpr*> (e->pos);
-
-    out << e->pos->asm_code << '\n'
-        << "mov ebx," << e->pos->place << '\n'
-        << "mov ecx," << "dword[" << e->id << "+ebx*4-4]\n"
-        << "mov " << e->place << ",ecx\n";
-    
-    e->asm_code = out.str();
-}
-
-
-gen_code(NumExpr){
-    e -> place = newTemp();
-    e -> asm_code = "mov " + e -> place + "," + std::to_string(e -> val);
-}
-
-gen_code(IdExpr){
-    if(currentFunction != nullptr){
-        e->place = currentFunction->getPlace(e->val);
-    }else{
-        e->place = "dword["+e->val+"]";
-        e-> asm_code = "";
-        ids.push_back(e->val);
-    }
-    
-}
-
-gen_code(Stmt_List){
-    for(auto &stmt : e->statements){
-        gen_code(stmt);
-        e->place = stmt->place;
-        e->asm_code += stmt->asm_code;
-    }
-}
-
-
 
 gen_code(AddExpr){
     gen_code(e-> Expr1);
     gen_code(e-> Expr2);
-
-    //e -> place = e->Expr1->place;
     e->place = newTemp();
     std::ostringstream out;
 
@@ -483,7 +274,6 @@ gen_code(AddExpr){
 gen_code(SubExpr){
     gen_code(e-> Expr1);
     gen_code(e-> Expr2);
-    //e->place = e->Expr1->place;
     e -> place = newTemp();
     std::ostringstream out;
 
@@ -504,7 +294,6 @@ gen_code(DivExpr){
     gen_code(e-> Expr2);
 
     e -> place = newTemp();
-    //std::cout << "EPLACE " << e->Expr1->place << std::endl;
     std::ostringstream out;
 
     out << e->Expr1 ->asm_code << '\n'
@@ -555,6 +344,239 @@ gen_code(MultExpr){
 
 }
 
+gen_code(LessThanExpr){
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
+
+    e->place = e->Expr2->place;
+
+    std::ostringstream out;
+    out <<  e->Expr1 -> asm_code << '\n'
+        << e->Expr2 -> asm_code << '\n'
+        << "mov eax," << e->Expr1->place << '\n'
+        << "cmp eax," << e->place << '\n'
+        << "mov eax,0\n"
+        << "setl al \n"
+        << "mov " << e -> place << ",eax\n";
+    e->asm_code = out.str();
+}
+
+gen_code(GreaterThanExpr){
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
+
+    e -> place = e->Expr2->place;
+
+    std::ostringstream out;
+    out <<  e->Expr1 -> asm_code << '\n'
+        << e->Expr2 -> asm_code << '\n'
+        << "mov eax," << e->Expr1->place << '\n'
+        << "cmp eax,"<< e->place << '\n'
+        << "mov eax,0\n"
+        << "setg al \n"
+        << "mov " << e -> place << ",eax\n";
+
+    e->asm_code = out.str();
+}
+
+gen_code(LessEqThanExpr){
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
+
+    e -> place = e->Expr2->place;
+    std::ostringstream out;
+    out <<  e->Expr1 -> asm_code << '\n'
+        << e->Expr2 -> asm_code << '\n'
+        << "mov eax," << e->Expr1->place << '\n'
+        << "cmp eax," << e->place << '\n'
+        << "mov eax,0\n"
+        << "setle al \n"
+        << "mov " << e -> place << ",eax\n";
+    e->asm_code = out.str();
+}
+
+gen_code(GreaterEqThanExpr){        
+    gen_code(e->Expr2);
+
+    e->place = e->Expr2->place;
+
+    std::ostringstream out;
+    out <<  e->Expr1-> asm_code << '\n'
+        << e->Expr2 -> asm_code << '\n'
+        << "mov eax," << e->Expr1->place << '\n'
+        << "cmp eax," << e->place << '\n'
+        << "mov eax,0\n"
+        << "setge al\n"
+        << "mov "<< e-> place<< ",eax\n";
+
+    e->asm_code =out.str();
+}
+
+
+gen_code(EqualExpr){
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
+
+    e->place = e->Expr2->place;
+
+    std::ostringstream out;
+
+    out << e->Expr1->asm_code<< '\n'
+        << e->Expr2->asm_code<< '\n'
+        << "mov eax," << e->Expr1->place << '\n'
+        << "cmp eax,"<< e->place << '\n'
+        << "mov eax,0\n"
+        << "sete al\n"
+        << "mov "<< e->place << ",eax\n";
+    
+    e->asm_code= out.str();
+}
+
+
+gen_code(NotEqualExpr){
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
+
+    e->place = e->Expr2->place;
+
+    std::ostringstream out;
+    out << e->Expr1->asm_code << '\n'
+        << e->Expr2->asm_code << '\n'
+        << "mov eax," << e->Expr1->place << '\n'
+        << "cmp eax," << e->place << '\n'
+        << "mov eax,0\n"
+        << "setne al\n"
+        << "mov "<< e->place << ",eax\n";
+    
+    e->asm_code = out.str();
+}
+
+gen_code(AndExpr){
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
+
+    e -> place = e->Expr2->place;
+    string_t label_false = newLabel();
+    string_t label_end = newLabel();
+
+    std::ostringstream out;
+
+    out 
+        << e->Expr1 -> asm_code << '\n'
+        << e->Expr2 -> asm_code << '\n'
+        << "cmp " << e->Expr1 -> place << ",0\n"
+        << "je "<< label_false << '\n'
+        << "cmp " << e->Expr2->place << ",0\n"
+        << "je " << label_false << '\n'
+        << "mov "<< e->place << ",1 " << '\n'
+        << "jmp "<< label_end << '\n'
+        << label_false<< ":\n"
+        << "mov "<< e->place << ",0\n"
+        << label_end << ":\n";
+
+    e->asm_code = out.str();
+
+}
+
+gen_code(OrExpr){
+    gen_code(e->Expr1);
+    gen_code(e->Expr2);
+
+    e->place = newTemp();
+    string_t label_true = newLabel();
+    string_t label_end = newLabel();
+
+    std::ostringstream out;
+    out << e->Expr1->asm_code << '\n'
+        << e->Expr2->asm_code  << '\n'
+        << "cmp " << e->Expr1 -> place << ",1\n"
+        << "je " << label_true << '\n'
+        << "cmp " << e->Expr2->place << ",1\n"
+        << "je " << label_true << '\n'
+        << "mov " << e->place << ",0\n"
+        << "jmp " << label_end << '\n'
+        << label_true << ":\n"
+        << "mov " << e->place << ",1\n"
+        << label_end << ":\n";
+
+        e->asm_code =out.str();
+}
+
+gen_code(ArrayExpr){
+    gen_code(e->pos);
+    std::ostringstream out;
+    e->place = newTemp();
+
+    NumExpr* arrPos = static_cast<NumExpr*> (e->pos);
+    out << e->pos->asm_code << '\n'
+        << "mov ebx," << e->pos->place << '\n'
+        << "mov ecx," << "dword[" << e->id << "+ebx*4-4]\n"
+        << "mov " << e->place << ",ecx\n";
+    
+    e->asm_code = out.str();
+}
+
+
+gen_code(NumExpr){
+    e->place = newTemp();
+    e->asm_code = "mov " + e -> place + "," + std::to_string(e -> val);
+}
+
+gen_code(IdExpr){
+    if(crnt_Function != nullptr){
+        e->place = crnt_Function->getPlace(e->val);
+    }else{
+        e->place = "dword["+e->val+"]";
+        e-> asm_code = "";
+        identifiers.push_back(e->val);
+    }
+    
+}
+
+gen_code(ForStmt){
+    gen_code(e->assign);
+    gen_code(e->cond);
+    gen_code(e->block);
+
+    e-> label_start = newLabel();
+    e-> label_end = newLabel();
+
+    std::ostringstream out;
+
+    out << e->assign->asm_code << '\n'
+        << e->cond->asm_code << '\n'
+        << e-> label_start << ":\n"
+        << "mov eax, " <<  e->cond->place << '\n'
+        << "cmp " << e->assign ->place << ",eax\n"
+        << "jg " << e->label_end
+        << e->block->asm_code << '\n'
+        << "inc " << e->assign ->place << '\n'
+        << "jmp " << e->label_start << '\n'
+        << e->label_end << ":\n";
+
+    e-> asm_code = out.str();
+}
+
+gen_code(RptStmt){
+    gen_code(e->cond);
+    gen_code(e->statements);
+
+    std::ostringstream out;
+
+    string_t repeatL = newLabel(); 
+    std::string exitL = newLabel();
+
+    out << repeatL << ":\n"
+        << e-> statements ->asm_code << '\n'
+        << e-> cond->asm_code << '\n'
+        << "cmp " << e->cond->place << ", 1\n"
+        << "je " << exitL << "\n"
+        << "jmp " << repeatL << "\n"
+        << exitL << ":\n";
+
+    e->asm_code = out.str();
+}
+
 gen_code(IfStmt){
     gen_code(e->cond);
     gen_code(e->trueBlock);
@@ -588,7 +610,7 @@ gen_code(IfStmt){
 }
 
 gen_code(WhileStmt){
-    gen_code(e->condition);
+    gen_code(e->cond);
     gen_code(e->block);
     e-> label_start = newLabel();
     e-> label_end = newLabel();
@@ -596,8 +618,8 @@ gen_code(WhileStmt){
     std::ostringstream out;
 
     out << e->label_start << ":\n"
-        << e->condition->asm_code << '\n'
-        << "cmp " << e->condition->place << ", 0\n"
+        << e->cond->asm_code << '\n'
+        << "cmp " << e->cond->place << ", 0\n"
         << "je " << e->label_end << '\n'
         << e->block->asm_code << '\n'
         << "jmp " << e->label_start << '\n'
@@ -605,54 +627,6 @@ gen_code(WhileStmt){
 
     e->asm_code = out.str();
 }
-
-
-gen_code(ForStmt){
-    gen_code(e->assign);
-    gen_code(e->cond);
-    gen_code(e->block);
-
-    e-> label_start = newLabel();
-    e-> label_end = newLabel();
-
-    std::ostringstream out;
-
-    out << e->assign->asm_code << '\n'
-        << e->cond->asm_code << '\n'
-        << e-> label_start << ":\n"
-        << "mov eax, " <<  e->cond->place << '\n'
-        << "cmp " << e->assign ->place << ",eax\n"
-        << "jg " << e->label_end
-        << e->block->asm_code << '\n'
-        << "inc " << e->assign ->place << '\n'
-        << "jmp " << e->label_start << '\n'
-        << e->label_end << ":\n";
-
-    e-> asm_code = out.str();
-
-
-}
-
-gen_code(RptStmt){
-    gen_code(e->condition);
-    gen_code(e->statements);
-
-    std::ostringstream out;
-
-    string_t repeatL = newLabel(); 
-    std::string exitL = newLabel();
-
-    out << repeatL << ":\n"
-        << e-> statements ->asm_code << '\n'
-        << e-> condition->asm_code << '\n'
-        << "cmp " << e->condition->place << ", 1\n"
-        << "je " << exitL << "\n"
-        << "jmp " << repeatL << "\n"
-        << exitL << ":\n";
-
-    e->asm_code = out.str();
-}
-
 
 gen_code(Func_Decl){
     std::ostringstream out;
@@ -672,7 +646,7 @@ gen_code(Func_Decl){
     count_b.push_back(funcion);
     funcion->params = vectorTemp;
     
-    currentFunction = funcion;
+    crnt_Function = funcion;
     gen_code(e->statements);
     out << e-> functionID << ":\n"
         << "push ebp\n"
@@ -681,11 +655,18 @@ gen_code(Func_Decl){
         << "mov esp,ebp\n"
         << "pop ebp\n"
         << "ret\n";
-
     e->asm_code = out.str();
-    currentFunction = nullptr;
+    crnt_Function = nullptr;
 }
 
+
+gen_code(Stmt_List){
+    for(auto &stmt : e->statements){
+        gen_code(stmt);
+        e->place = stmt->place;
+        e->asm_code += stmt->asm_code;
+    }
+}
 
 gen_code(Proc_Decl){
     
@@ -693,7 +674,6 @@ gen_code(Proc_Decl){
     ByteCounter* funcion = new ByteCounter(e->procedureID);
     std::vector<std::pair<std::string, std::string>> vectorTemp;
     std::vector<std::string> refsTemp;
-
     for(auto &a : e->args){
         AST::Argument_N* arg = static_cast<AST::Argument_N*>(a);
         if(arg->isRef){
@@ -705,7 +685,7 @@ gen_code(Proc_Decl){
     count_b.push_back(funcion);
     funcion->params = vectorTemp;
     
-    currentFunction = funcion;
+    crnt_Function = funcion;
     gen_code(e->statements);
     out << e-> procedureID << ":\n"
         << "push ebp\n"
@@ -715,63 +695,9 @@ gen_code(Proc_Decl){
         << "mov esp,ebp\n"
         << "pop ebp\n"
         << "ret\n";
-
     e->asm_code = out.str();
-    currentFunction = nullptr;
+    crnt_Function = nullptr;
 }
-
-gen_code(Program_Call){
-    e->place = newTemp();
-    std::ostringstream out;
-
-    std::vector<AST::Node*> params = e->args;
-    //pushing de derecha a izq
-    std::reverse(params.begin(), params.end());
-
-    for(auto &param: params){
-        gen_code(param);
-
-        if(param -> isA(IdExpr_kind)){
-            IdExpr* ID = static_cast<IdExpr*> (param);
-            string_t varName = ID->val;
-            
-            out << param ->asm_code << '\n'
-                << "push " << param->place << '\n';
-        }else{
-            out << param ->asm_code << '\n'
-                << "push " << param->place << '\n';
-        }
-
-    }
-        
-    out << "call " << e->id << '\n'
-        << "add esp," <<  (e->args.size())*4 << '\n'
-        << "mov " <<  e->place << ",eax\n";
-
-
-    e->asm_code = out.str();
-
-}
-
-
-gen_code(RetrnStmt){
-    gen_code(e->expr);
-    e->place = e->expr->place;
-
-    std::ostringstream out;
-    out << e->expr->asm_code << '\n'
-    << "mov eax," << e->expr->place << '\n'
-    << "mov esp,ebp\n"
-    << "pop ebp\n"
-    << "ret\n";
-
-    e->asm_code = out.str();
-}
-
-
-
-
-
 
 gen_code(Program_C){
     gen_code(e->varSection);
@@ -783,10 +709,8 @@ gen_code(Program_C){
     for(int i = 0; i< temps; i++){
         tempData << "tmp" << i << " dd 0\n";
     }
-    //agregando los S_Constanttants en la seccion de data
     for (auto a: vars){
         stringIDs << a.first << " db \'" << a.second << "\',0 ,10\n";
-        //first es el nombre de la variable,second es la string
     }
     std::ostringstream out;
     out << "extern printf\n"
@@ -794,7 +718,6 @@ gen_code(Program_C){
         << "section .data\n"
         << "format db '%d',0\n"
         << "charFormat db '%c',0\n"
-        //aqui revisar si hay bools definidos para no tener que hacer pushes innecesarios
         << "true dd 1\n"
         << "false dd 0\n"
         << "Truep db 'Verdadero',0\n"
@@ -811,7 +734,48 @@ gen_code(Program_C){
     e->asm_code = out.str();
 }
 
+gen_code(Program_Call){
+    e->place = newTemp();
+    std::ostringstream out;
 
+    std::vector<AST::Node*> params = e->args;
+    std::reverse(params.begin(), params.end());
+    for(auto &param: params){
+        gen_code(param);
+
+        if(param -> isA(IdExpr_kind)){
+            IdExpr* ID = static_cast<IdExpr*> (param);
+            string_t varName = ID->val;
+            
+            out << param ->asm_code << '\n'
+                << "push " << param->place << '\n';
+        }else{
+            out << param ->asm_code << '\n'
+                << "push " << param->place << '\n';
+        }
+    }
+    out << "call " << e->id << '\n'
+        << "add esp," <<  (e->args.size())*4 << '\n'
+        << "mov " <<  e->place << ",eax\n";
+
+
+    e->asm_code = out.str();
+
+}
+
+gen_code(RetrnStmt){
+    gen_code(e->expr);
+    e->place = e->expr->place;
+
+    std::ostringstream out;
+    out << e->expr->asm_code << '\n'
+    << "mov eax," << e->expr->place << '\n'
+    << "mov esp,ebp\n"
+    << "pop ebp\n"
+    << "ret\n";
+
+    e->asm_code = out.str();
+}
 
 gen_code(Var_Decl){
     //iniciar las variables en 0
@@ -823,30 +787,23 @@ gen_code(Var_Decl){
         Type_N * typeN = static_cast<Type_N*>(e->type);
 
         if(typeN-> type == "int"){
-            idTypes[var] = "int";
+            ident_type[var] = "int";
         }else if (typeN-> type == "bool"){
-            idTypes[var] = "bool";
+            ident_type[var] = "bool";
         }else if (typeN-> type == "char"){
-            idTypes[var] = "char";
+            ident_type[var] = "char";
         }else{
-            idTypes[var] = "arr";
+            ident_type[var] = "arr";
         }
 
         if(typeN-> type != "arr"){
             out << var << " dd 0\n";
         }else{
-            //si es arreglo
             out << var << " times " << typeN -> arraySize << " dd 0\n";
         }
         
     }
-
     e->asm_code = out.str();
-}
-
-
-gen_code(Argument_N){
-
 }
 
 
@@ -857,94 +814,72 @@ gen_code(PrintStmt){
         gen_code(a);
         if(a->isA(IdExpr_kind)){
             IdExpr* ID = static_cast<IdExpr*>(a);
-
             out << a->asm_code << std::endl;
-            if(idTypes[ID->val] == "int" || idTypes[ID->val] == "char"){
+            if(ident_type[ID->val] == "int" || ident_type[ID->val] == "char"){
                 out << "push " << a->place << "\n";
-            }else if(idTypes[ID->val] == "bool"){
+            }else if(ident_type[ID->val] == "bool"){
                 out << getBoolPrint(a->place);
-            }else if(idTypes[ID->val] == "char"){
+            }else if(ident_type[ID->val] == "char"){
                 out << "push charFormat\n"
                 << "call printf\n";
             }
-
-
-            if(idTypes[ID->val] == "int"){
+            if(ident_type[ID->val] == "int"){
                 out << "push format\n"
                     << "call printf\n";
-            }else if(idTypes[ID->val] == "char"){
+            }else if(ident_type[ID->val] == "char"){
                     out << "push charFormat\n"
                         << "call printf\n";
             }
 
-            if(idTypes[ID->val] == "int" || idTypes[ID->val] == "char" ){
+            if(ident_type[ID->val] == "int" || ident_type[ID->val] == "char" ){
                 out << "add esp,8\n";
-            }else if(idTypes[ID->val] == "bool"){
-                //out << "add esp, 4\n";
+            }else if(ident_type[ID->val] == "bool"){}
+            }else if(a->isA(NumExpr_kind)){
+                out << a->asm_code << '\n'
+                    << "push " << a->place << '\n'
+                    << "push format\n"
+                    << "call printf\n"
+                    << "add esp,8\n"; 
             }
-            
-        }else if(a->isA(NumExpr_kind)){
-            //std::cout << "is num\n";
-            out << a->asm_code << '\n'
-                << "push " << a->place << '\n'
-                << "push format\n"
-                << "call printf\n"
-                << "add esp,8\n"; 
+            else if(a->isA(S_Constant_kind)){
+                out << a->asm_code << '\n'
+                    << "push " << a -> place << '\n'
+                    << "call printf\n"
+                    << "add esp,4\n"; 
+            }else if(a->isA(BinaryExpression_kind)){
+                BinaryExpression* bin = static_cast<BinaryExpression*>(a);
+
+                gen_code(a);
+                out << a->asm_code << '\n'
+                    << "push " << a->place << "\n"
+                    << "push format\n"
+                    << "call printf\n"
+                    << "add esp,8\n";
+            }else if(a->isA(Program_Call_kind)){
+                gen_code(a);
+                out << a-> asm_code << '\n'
+                    << "push eax\n"
+                    << "push format\n"
+                    << "call printf\n"
+                    << "add esp,8\n";
+            }else if(a->isA(ArrayExpr_kind)){
+                gen_code(a);
+                out << a->asm_code << '\n'
+                    << "push " << a->place << '\n'
+                    << "push format\n"
+                    << "call printf\n"
+                    << "add esp, 8\n";
+            }else if(a->isA(CharExpr_kind)){
+                CharExpr* charE = static_cast<CharExpr*>(a);
+                out << a->asm_code << '\n'
+                    << "push " << charE->val << "\n"
+                    << "push charFormat\n"
+                    << "call printf\n"
+                    << "add esp,8\n";
+            } 
         }
-        else if(a->isA(S_Constant_kind)){
-            
-            out << a->asm_code << '\n'
-                << "push " << a -> place << '\n'
-                << "call printf\n"
-                << "add esp,4\n"; 
-
-
-        }else if(a->isA(BinaryExpression_kind)){
-            BinaryExpression* bin = static_cast<BinaryExpression*>(a);
-
-            gen_code(a);
-        
-            out << a->asm_code << '\n'
-                << "push " << a->place << "\n"
-                << "push format\n"
-                << "call printf\n"
-                << "add esp,8\n";
-
-        }else if(a->isA(Program_Call_kind)){
-            gen_code(a);
-            out << a-> asm_code << '\n'
-                << "push eax\n"
-                << "push format\n"
-                << "call printf\n"
-                << "add esp,8\n";
-        }else if(a->isA(ArrayExpr_kind)){
-            gen_code(a);
-            out << a->asm_code << '\n'
-                << "push " << a->place << '\n'
-                << "push format\n"
-                << "call printf\n"
-                << "add esp, 8\n";
-        }else if(a->isA(CharExpr_kind)){
-            //std::cout << "is char\n";
-            CharExpr* charE = static_cast<CharExpr*>(a);
-            out << a->asm_code << '\n'
-                << "push " << charE->val << "\n"
-                << "push charFormat\n"
-                << "call printf\n"
-                << "add esp,8\n";
-        }
-        
+        e->asm_code = out.str();
     }
-
-    e->asm_code = out.str();
-
-}
-
-
-gen_code(Type_N){
-
-}
-
 
 gen_code(AssignStmt){
     gen_code(e-> Expr1);
@@ -952,9 +887,8 @@ gen_code(AssignStmt){
     std::ostringstream out;
 
     if(e->Expr1->isA(IdExpr_kind)){
-        //casteando el exp1 a un id para agregar a la lista de ids
         IdExpr* exp1 = static_cast<IdExpr*>(e->Expr1);
-        ids.push_back(exp1->val);
+        identifiers.push_back(exp1->val);
 
         e->place = e->Expr1 -> place;
 
@@ -966,21 +900,22 @@ gen_code(AssignStmt){
     }else{
         ArrayExpr* exp1 = static_cast<ArrayExpr*>(e->Expr1);
         NumExpr* index = static_cast<NumExpr*> (exp1->pos);
-        //si se esta asignando a un arreglo
 
         out << e->Expr2->asm_code << '\n'
-            //<< e->Expr1->asm_code << '\n'
             << "mov ecx, " << e->Expr2->place << '\n'
-            << "mov dword[" << exp1-> id << "+" << index -> val << " *4-4],ecx\n"
+            << "mov dword[" << exp1-> id << "+" << index -> val << "*4-4],ecx\n"
             << "mov ecx, dword[" << exp1-> id << "+" << index -> val << "*4-4]\n"
             << "mov " << e->Expr2 ->place << ",ecx\n\n";
             e->place = e->Expr2->place;
         
     }
-    
     e->asm_code = out.str();
 }
 
+gen_code(CharExpr){
+    e -> place = newTemp();
+    e -> asm_code = "mov " + e -> place + "," + std::to_string(e -> val);
+}
 
 gen_code(S_Constant){
     string_t strName = newStr();
@@ -996,7 +931,10 @@ gen_code(BoolExpr){
         e->place = "dword[false]";
 }
 
-gen_code(CharExpr){
-    e -> place = newTemp();
-    e -> asm_code = "mov " + e -> place + "," + std::to_string(e -> val);
+gen_code(Argument_N){
+//Solo lo instancie para evitar error en Argument_N
+}
+
+gen_code(Type_N){
+//Solo lo instancie para evitar error 
 }

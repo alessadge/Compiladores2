@@ -1162,16 +1162,16 @@ namespace  Expr  {
   case 25:
 #line 247 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/parser.y"
     {       
-        std::vector<AST::Node*> vars;
+        std::vector<AST::Node*> PARAM_FUNCION;
         int bytes = 8;
         for(auto &a : yystack_[10].value.as < std::vector<AST::Node*> > ())
         {
             AST::Argument_N* arg = static_cast<AST::Argument_N*>(a);
             arg->pos = bytes;
-            vars.push_back(arg);
+            PARAM_FUNCION.push_back(arg);
             bytes += 4;
         }
-        yylhs.value.as < AST::Node* > () = new AST::Func_Decl(yystack_[11].value.as < std::string > (), vars, yystack_[8].value.as < AST::Node* > (), yystack_[6].value.as < std::vector<AST::Node*> > (), new AST::Stmt_List(yystack_[3].value.as < std::vector<AST::Node*> > ()));
+        yylhs.value.as < AST::Node* > () = new AST::Func_Decl(yystack_[11].value.as < std::string > (), PARAM_FUNCION, yystack_[8].value.as < AST::Node* > (), yystack_[6].value.as < std::vector<AST::Node*> > (), new AST::Stmt_List(yystack_[3].value.as < std::vector<AST::Node*> > ()));
     }
 #line 1177 "expr_parser.cpp"
     break;
@@ -1179,15 +1179,15 @@ namespace  Expr  {
   case 26:
 #line 260 "/home/alessandro/Desktop/Evaluaciones/Mini-Lpp/parser.y"
     {
-        std::vector<AST::Node*> vars;
+        std::vector<AST::Node*> PARAM_PROCEDIMIENTO;
         int bytes = 8;
         for(auto &a : yystack_[8].value.as < std::vector<AST::Node*> > ()){
             AST::Argument_N* arg = static_cast<AST::Argument_N*>(a);
             arg->pos = bytes;
-            vars.push_back(arg);
+            PARAM_PROCEDIMIENTO.push_back(arg);
             bytes += 4;
     }
-    yylhs.value.as < AST::Node* > () = new AST::Proc_Decl(yystack_[9].value.as < std::string > (), vars, yystack_[6].value.as < std::vector<AST::Node*> > (), new AST::Stmt_List(yystack_[3].value.as < std::vector<AST::Node*> > ()));
+    yylhs.value.as < AST::Node* > () = new AST::Proc_Decl(yystack_[9].value.as < std::string > (), PARAM_PROCEDIMIENTO, yystack_[6].value.as < std::vector<AST::Node*> > (), new AST::Stmt_List(yystack_[3].value.as < std::vector<AST::Node*> > ()));
 }
 #line 1193 "expr_parser.cpp"
     break;
